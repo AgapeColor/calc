@@ -22,3 +22,6 @@ add_executable(calc
 
 target_include_directories(calc PRIVATE ${CMAKE_SOURCE_DIR}/include)
 target_link_libraries(calc PRIVATE calc_math)
+
+include(GNUInstallDirs)
+install(TARGETS calc RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
