@@ -7,7 +7,7 @@
 #include <string.h>
 
 static Operation parse_op(const char* opt) {
-    if (!opt) return NONE;
+    if (opt == nullptr) return NONE;
 
     if (strcmp(opt, "add") == 0)  return ADD;
     if (strcmp(opt, "sub") == 0)  return SUB;
@@ -20,11 +20,12 @@ static Operation parse_op(const char* opt) {
 }
 
 static int parse_num(const char* opt, long long& num) {
-    if (!opt) return 1;
+    if (opt == nullptr) return 1;
 
     errno = 0;
     char* end = 0;
-    num = strtoll(opt, &end, 10);
+    constexpr int decimal_base = 10;
+    num = strtoll(opt, &end, decimal_base);
     if (errno != 0)   return 1;
     if (end == opt)   return 1;
     if (*end != '\0') return 1;
@@ -53,10 +54,10 @@ int parse_args(int argc, char** argv, Context& ctx) {
         {0, 0, 0, 0}
     };
     
-    int c = 0;
+    int opt = 0;
 
-    while ((c = getopt_long(argc, argv, "o:a:b:h", long_options, 0)) != -1) {
-        switch (c) {
+    while ((opt = getopt_long(argc, argv, "o:a:b:h", long_options, 0)) != -1) {
+        switch (opt) {
             case 'o':
                 ctx.operation = parse_op(optarg);
                 break;

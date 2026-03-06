@@ -1,7 +1,12 @@
 ---
-Checks: '-*,
-  readability-*,
-  -readability-identifier-length,
-  bugprone-*,
-  -bugprone-easily-swappable-parameters'
+Checks: >
+    -*,
+    clang-analyzer-*,
+    bugprone-*,
+    readability-*,
+    -readability-braces-around-statements,
+    -bugprone-easily-swappable-parameters
+WarningsAsErrors: ''
+HeaderFilterRegex: '.*'
+SystemHeaders:   false
 ...
