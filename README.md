@@ -23,9 +23,21 @@ sudo cmake --build build --target install
 
 Парсинг аргументов: `getopt_long`.
 
+После установки:
+
+```bash
+calc -h
+calc -o add  -a 2 -b 3
+calc -o div  -a 10 -b 2
+calc -o pow  -a 2 -b 10
+calc -o fact -a 5
+```
+
+Или без установки (из директории сборки):
+
 ```bash
 ./build/calc -h
-./build/calc -o add  -a 2 -b 3
+./build/calc -o add -a 2 -b 3
 ./build/calc -o div  -a 10 -b 2
 ./build/calc -o pow  -a 2 -b 10
 ./build/calc -o fact -a 5
