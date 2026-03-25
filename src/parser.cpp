@@ -19,17 +19,18 @@ static Operation parse_op(const char* opt) {
     return NONE;
 }
 
-static int parse_num(const char* opt, long long& num) {
+static int parse_num(const char* opt, int& num) {
     if (opt == nullptr) return 1;
 
     errno = 0;
     char* end = 0;
     constexpr int decimal_base = 10;
-    num = strtoll(opt, &end, decimal_base);
+    long result = strtol(opt, &end, decimal_base);
     if (errno != 0)   return 1;
     if (end == opt)   return 1;
     if (*end != '\0') return 1;
 
+    num = static_cast<int>(result);
     return 0;
 }
 

@@ -22,5 +22,5 @@ void print_result(Context& ctx) {
         return;
     }
 
-    printf("Result: %lld\n", ctx.result);
+    printf("Result: %d\n", ctx.result);
 }

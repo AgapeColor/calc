@@ -20,13 +20,13 @@ enum AppCode {
 struct Context {
     Operation operation = NONE;
 
-    long long a = 0;
-    long long b = 0;
+    int a = 0;
+    int b = 0;
     
     bool has_a = false;
     bool has_b = false;
     
-    long long result = 0;
+    int result = 0;
     
     AppCode app_code = OK;
     int math_code = 0;
