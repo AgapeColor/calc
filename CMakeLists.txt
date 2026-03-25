@@ -12,7 +12,11 @@ option(ENABLE_CLANG_FORMAT "Add clang-format target" ON)
 
 # Dependencies
 include(FetchContent)
-FetchContent_Declare(calc_math SOURCE_DIR ${CMAKE_SOURCE_DIR}/../calc-math)
+FetchContent_Declare(
+    calc_math
+    GIT_REPOSITORY https://github.com/AgapeColor/calc-math.git
+    GIT_TAG main
+)
 FetchContent_MakeAvailable(calc_math)
 
 # clang-tidy
