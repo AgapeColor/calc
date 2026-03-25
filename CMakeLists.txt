@@ -17,7 +17,12 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/AgapeColor/calc-math.git
     GIT_TAG main
 )
-FetchContent_MakeAvailable(calc_math)
+FetchContent_Declare(
+    json
+    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(calc_math json)
 
 # clang-tidy
 if(ENABLE_CLANG_TIDY)
@@ -62,7 +67,7 @@ add_executable(calc
 )
 
 target_include_directories(calc PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(calc PRIVATE calc_math)
+target_link_libraries(calc PRIVATE calc_math nlohmann_json::nlohmann_json)
 
 # Install
 include(GNUInstallDirs)
