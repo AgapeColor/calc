@@ -1,6 +1,6 @@
 #pragma once
 
-enum Operation {
+enum class Operation {
     NONE = 0,
     ADD,
     SUB,
@@ -10,24 +10,27 @@ enum Operation {
     FACT
 };
 
-enum AppCode {
-    OK = 0,
-    BAD_ARGS = 7,
-    CHECK_FAILED = 8,
-    CALC_FAILED = 9
-};
+class Context {
+public:
+    // Setters
+    void setOperation(Operation value) { operation = value; }
+    void setA(int value) { a = value; has_a = true; }
+    void setB(int value) { b = value; has_b = true; }
+    void setResult(int value) { result = value; }
 
-struct Context {
-    Operation operation = NONE;
+    // Getters
+    Operation getOperation() const { return operation; }
+    int getA() const { return a; }
+    int getB() const { return b; }
+    bool hasA() const { return has_a; }
+    bool hasB() const { return has_b; }
+    int getResult() const { return result; }
 
+private:
+    Operation operation = Operation::NONE;
     int a = 0;
     int b = 0;
-    
     bool has_a = false;
     bool has_b = false;
-    
     int result = 0;
-    
-    AppCode app_code = OK;
-    int math_code = 0;
 };
