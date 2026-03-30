@@ -4,11 +4,12 @@
 
 int main(int argc, char** argv) {
     try {
-        run(argc, argv);
+        Runner appRunner;
+        appRunner.run(argc, argv);
         return 0;
     }
-    catch (std::exception& e) {
-        std::cerr << "Error: " << e.what() << std::endl;
+    catch (const std::exception& e) {
+        std::cerr << e.what() << std::endl;
         return 1;
     }
 }

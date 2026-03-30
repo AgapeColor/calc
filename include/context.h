@@ -13,24 +13,24 @@ enum class Operation {
 class Context {
 public:
     // Setters
-    void setOperation(Operation value) { operation = value; }
-    void setA(int value) { a = value; has_a = true; }
-    void setB(int value) { b = value; has_b = true; }
-    void setResult(int value) { result = value; }
+    void setOperation(Operation value) { operation_ = value; }
+    void setA(int value) { a_ = value; has_a_ = true; }
+    void setB(int value) { b_ = value; has_b_ = true; }
+    void setResult(int value) { result_ = value; }
 
     // Getters
-    Operation getOperation() const { return operation; }
-    int getA() const { return a; }
-    int getB() const { return b; }
-    bool hasA() const { return has_a; }
-    bool hasB() const { return has_b; }
-    int getResult() const { return result; }
+    Operation getOperation() const { return operation_; }
+    int getA() const { return a_; }
+    int getB() const { return b_; }
+    bool hasA() const { return has_a_; }
+    bool hasB() const { return has_b_; }
+    int getResult() const { return result_; }
 
 private:
-    Operation operation = Operation::NONE;
-    int a = 0;
-    int b = 0;
-    bool has_a = false;
-    bool has_b = false;
-    int result = 0;
+    Operation operation_ = Operation::NONE;
+    int a_ = 0;
+    int b_ = 0;
+    bool has_a_ = false;
+    bool has_b_ = false;
+    int result_ = 0;
 };

@@ -1,26 +1,8 @@
 #include "runner.h"
-#include "parser.h"
-#include "checker.h"
-#include "calculator.h"
-#include "printer.h"
 
-AppCode run(int argc, char** argv) {
-    Context ctx;
-
-    if (parse_args(argc, argv, ctx) != 0)
-        return BAD_ARGS;
-
-    if (check_args(ctx) != 0) {
-        print_result(ctx);
-        return CHECK_FAILED;
-    }
-
-    if (calculate(ctx) != 0) {
-        print_result(ctx);
-        return CALC_FAILED;
-    }
-
-    print_result(ctx);
-    
-    return OK;
+void Runner::run(int argc, char** argv) {
+    parser_.parse_args(argc, argv, ctx_);
+    checker_.check_args(ctx_);
+    calculator_.calculate(ctx_);
+    printer_.print_result(ctx_);
 }

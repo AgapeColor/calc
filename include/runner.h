@@ -1,5 +1,20 @@
 #pragma once
 
 #include "context.h"
+#include "parser.h"
+#include "checker.h"
+#include "calculator.h"
+#include "printer.h"
 
-AppCode run(int argc, char** argv);
+
+class Runner {
+public:
+    void run(int argc, char** argv);
+    
+private:
+    Context ctx_;
+    Parser parser_;
+    Checker checker_;
+    Calculator calculator_;
+    Printer printer_;
+};
