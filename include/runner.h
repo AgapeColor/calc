@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "checker.h"
 #include "calculator.h"
+#include "printer.h"
 
 class Runner {
 public:

@@ -7,7 +7,6 @@ Checks: >
     -readability-braces-around-statements,
     -bugprone-easily-swappable-parameters
 WarningsAsErrors: ''
-HeaderFilterRegex: '.*'
 SystemHeaders:   false
 HeaderFilterRegex: '^(?!.*/_deps/).*'
 ...
