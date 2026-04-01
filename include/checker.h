@@ -1,5 +1,8 @@
 #pragma once
 
-#include "context.h"
+class Context;
 
-int check_args(Context& ctx);
+class Checker {
+public:
+    void check_args(const Context& ctx);
+};
