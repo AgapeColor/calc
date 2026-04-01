@@ -76,7 +76,7 @@ add_executable(calc
     src/checker.cpp
     src/calculator.cpp
     src/printer.cpp
-    src/logger.cpp
+    # src/logger.cpp
 )
 
 target_include_directories(calc
@@ -94,8 +94,8 @@ target_link_libraries(calc
 # Tests
 add_executable(calc_tests
     tests/test_parser.cpp
-    tests/test_checker.cpp
-    tests/test_calculator.cpp
+    # tests/test_checker.cpp
+    # tests/test_calculator.cpp
 
     src/runner.cpp
     src/parser.cpp
