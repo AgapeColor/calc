@@ -1,82 +1,43 @@
 #include "parser.h"
+#include "printer.h"
 
-#include <getopt.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <string.h>
+#include <stdexcept>
+#include <string>
+#include <nlohmann/json.hpp>
 
-static Operation parse_op(const char* opt) {
-    if (opt == nullptr) return NONE;
-
-    if (strcmp(opt, "add") == 0)  return ADD;
-    if (strcmp(opt, "sub") == 0)  return SUB;
-    if (strcmp(opt, "mul") == 0)  return MUL;
-    if (strcmp(opt, "div") == 0)  return DIV;
-    if (strcmp(opt, "pow") == 0)  return POW;
-    if (strcmp(opt, "fact") == 0) return FACT;
-
-    return NONE;
-}
-
-static int parse_num(const char* opt, int& num) {
-    if (opt == nullptr) return 1;
-
-    errno = 0;
-    char* end = 0;
-    constexpr int decimal_base = 10;
-    long result = strtol(opt, &end, decimal_base);
-    if (errno != 0)   return 1;
-    if (end == opt)   return 1;
-    if (*end != '\0') return 1;
-
-    num = static_cast<int>(result);
-    return 0;
-}
-
-void print_help(const char* app) {
-    printf("Usage:\n");
-    printf("  %s -o add  -a 2 -b 3\n", app);
-    printf("  %s -o fact -a 5\n", app);
-    
-    printf("\nOptions:\n");
-    printf("  -o, --op   add|sub|mul|div|pow|fact\n");
-    printf("  -a, --a    first integer\n");
-    printf("  -b, --b    second integer (not for fact)\n");
-    printf("  -h, --help show this help\n");
-}
-
-int parse_args(int argc, char** argv, Context& ctx) {
-    static struct option long_options[] = {
-        {"op",   required_argument, 0, 'o'},
-        {"a",    required_argument, 0, 'a'},
-        {"b",    required_argument, 0, 'b'},
-        {"help", no_argument,       0, 'h'},
-        {0, 0, 0, 0}
-    };
-    
-    int opt = 0;
-
-    while ((opt = getopt_long(argc, argv, "o:a:b:h", long_options, 0)) != -1) {
-        switch (opt) {
-            case 'o':
-                ctx.operation = parse_op(optarg);
-                break;
-            case 'a':
-                if (parse_num(optarg, ctx.a) != 0) return 1;
-                ctx.has_a = true;
-                break;
-            case 'b':
-                if (parse_num(optarg, ctx.b) != 0) return 1;
-                ctx.has_b = true;
-                break;
-            case 'h':
-                print_help(argv[0]);
-                return 1;
-            default:
-                return 1;
-        }
+static Operation parse_op(const nlohmann::json& data) {
+    if (!data.contains("op")) {
+        return Operation::NONE;
     }
+    std::string op = data.at("op").get<std::string>();
+    if (op == "add")  return Operation::ADD;
+    if (op == "sub")  return Operation::SUB;
+    if (op == "mul")  return Operation::MUL;
+    if (op == "div")  return Operation::DIV;
+    if (op == "pow")  return Operation::POW;
+    if (op == "fact") return Operation::FACT;
+    return Operation::NONE;
+}
 
-    return 0;
+void Parser::parse_args(int argc, char** argv, Context& ctx) {
+    using json = nlohmann::json;
+
+    if (argc < 2) {
+        throw std::invalid_argument("JSON argument is missed");
+    }
+    std::string arg = argv[1];
+    if (arg == "-h" || arg == "--help") {
+        Printer::print_help(argv[0]);
+        exit(0);
+    }
+    try {
+        json data = json::parse(argv[1]);
+        ctx.setOperation(parse_op(data));
+        ctx.setA(data.at("a").get<int>());
+        if (ctx.getOperation() != Operation::FACT)
+            ctx.setB(data.at("b").get<int>());
+    }
+    catch (const json::exception& e) {
+        throw std::invalid_argument(std::string("JSON parse error: ") + e.what());
+    }
 }
