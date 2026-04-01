@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.20)
 project(calc LANGUAGES CXX)
 
-# Compiling settings
+# Compiler settings
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -19,10 +19,23 @@ FetchContent_Declare(
 )
 FetchContent_Declare(
     json
-    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+    GIT_REPOSITORY https://github.com/nlohmann/json.git
+    GIT_TAG v3.12.0
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
-FetchContent_MakeAvailable(calc_math json)
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG v1.17.0
+)
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.17.0
+)
+FetchContent_MakeAvailable(calc_math json googletest spdlog)
+
+enable_testing()
 
 # clang-tidy
 if(ENABLE_CLANG_TIDY)
@@ -55,8 +68,7 @@ if(ENABLE_CLANG_FORMAT)
     endif()
 endif()
 
-
-# Targets
+# Main executable
 add_executable(calc
     src/main.cpp
     src/runner.cpp
@@ -64,10 +76,48 @@ add_executable(calc
     src/checker.cpp
     src/calculator.cpp
     src/printer.cpp
+    src/logger.cpp
 )
 
-target_include_directories(calc PRIVATE ${CMAKE_SOURCE_DIR}/include)
-target_link_libraries(calc PRIVATE calc_math nlohmann_json::nlohmann_json)
+target_include_directories(calc
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_link_libraries(calc
+    PRIVATE
+    calc_math
+    nlohmann_json::nlohmann_json
+    spdlog::spdlog
+)
+
+# Tests
+add_executable(calc_tests
+    tests/test_parser.cpp
+    tests/test_checker.cpp
+    tests/test_calculator.cpp
+
+    src/runner.cpp
+    src/parser.cpp
+    src/checker.cpp
+    src/calculator.cpp
+    src/printer.cpp
+)
+
+target_include_directories(calc_tests
+    PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_link_libraries(calc_tests
+    PRIVATE
+    GTest::gtest_main
+    calc_math
+    nlohmann_json::nlohmann_json
+)
+
+include(GoogleTest)
+gtest_discover_tests(calc_tests)
 
 # Install
 include(GNUInstallDirs)
