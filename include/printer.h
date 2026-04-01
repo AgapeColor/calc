@@ -1,5 +1,9 @@
 #pragma once
 
-#include "context.h"
+class Context;
 
-void print_result(Context& ctx);
+class Printer {
+public:
+    static void print_result(const Context& ctx);
+    static void print_help(const char* appName);
+};
