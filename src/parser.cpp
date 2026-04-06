@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "printer.h"
+#include "logger.h"
 
 #include <stdexcept>
 #include <string>
@@ -9,17 +10,19 @@ static Operation parse_op(const nlohmann::json& data) {
     if (!data.contains("op")) {
         return Operation::NONE;
     }
-    std::string oper = data.at("op").get<std::string>();
-    if (oper == "add")  return Operation::ADD;
-    if (oper == "sub")  return Operation::SUB;
-    if (oper == "mul")  return Operation::MUL;
-    if (oper == "div")  return Operation::DIV;
-    if (oper == "pow")  return Operation::POW;
-    if (oper == "fact") return Operation::FACT;
+    std::string op = data.at("op").get<std::string>();
+    if (op == "add")  return Operation::ADD;
+    if (op == "sub")  return Operation::SUB;
+    if (op == "mul")  return Operation::MUL;
+    if (op == "div")  return Operation::DIV;
+    if (op == "pow")  return Operation::POW;
+    if (op == "fact") return Operation::FACT;
     return Operation::NONE;
 }
 
 void Parser::parse_args(int argc, char** argv, Context& ctx) {
+    Logger::instance().debug("Parsing arguments");
+    
     using json = nlohmann::json;
 
     if (argc < 2) {
@@ -34,10 +37,12 @@ void Parser::parse_args(int argc, char** argv, Context& ctx) {
         json data = json::parse(argv[1]);
         ctx.setOperation(parse_op(data));
         ctx.setA(data.at("a").get<int>());
-        if (ctx.getOperation() != Operation::FACT)
+        if (ctx.getOperation() != Operation::FACT) {
             ctx.setB(data.at("b").get<int>());
+        }
     }
     catch (const json::exception& e) {
+        Logger::instance().error(std::string("JSON parse error: ") + e.what());
         throw std::invalid_argument(std::string("JSON parse error: ") + e.what());
     }
 }

@@ -76,7 +76,7 @@ add_executable(calc
     src/checker.cpp
     src/calculator.cpp
     src/printer.cpp
-    # src/logger.cpp
+    src/logger.cpp
 )
 
 target_include_directories(calc
@@ -102,6 +102,7 @@ add_executable(calc_tests
     src/checker.cpp
     src/calculator.cpp
     src/printer.cpp
+    src/logger.cpp
 )
 
 target_include_directories(calc_tests
@@ -114,6 +115,7 @@ target_link_libraries(calc_tests
     GTest::gtest_main
     calc_math
     nlohmann_json::nlohmann_json
+    spdlog::spdlog
 )
 
 include(GoogleTest)

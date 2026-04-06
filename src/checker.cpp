@@ -1,9 +1,12 @@
 #include "checker.h"
 #include "context.h"
+#include "logger.h"
 
 #include <stdexcept>
 
 void Checker::check_args(const Context& ctx) {
+    Logger::instance().debug("Validating arguments");
+    
     if (ctx.getOperation() == Operation::NONE) {
         throw std::invalid_argument("operation is not specified");
     }
