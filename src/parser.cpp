@@ -10,13 +10,13 @@ static Operation parse_op(const nlohmann::json& data) {
     if (!data.contains("op")) {
         return Operation::NONE;
     }
-    std::string op = data.at("op").get<std::string>();
-    if (op == "add")  return Operation::ADD;
-    if (op == "sub")  return Operation::SUB;
-    if (op == "mul")  return Operation::MUL;
-    if (op == "div")  return Operation::DIV;
-    if (op == "pow")  return Operation::POW;
-    if (op == "fact") return Operation::FACT;
+    std::string oper = data.at("op").get<std::string>();
+    if (oper == "add")  return Operation::ADD;
+    if (oper == "sub")  return Operation::SUB;
+    if (oper == "mul")  return Operation::MUL;
+    if (oper == "div")  return Operation::DIV;
+    if (oper == "pow")  return Operation::POW;
+    if (oper == "fact") return Operation::FACT;
     return Operation::NONE;
 }
 
