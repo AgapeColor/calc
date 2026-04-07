@@ -13,6 +13,4 @@ public:
 private:
     Context ctx_;
     Parser parser_;
-    Checker checker_;
-    Calculator calculator_;
 };
