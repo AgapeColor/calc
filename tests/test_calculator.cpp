@@ -8,8 +8,7 @@ TEST(CalculatorTest, AddTwoNumbers) {
     ctx.setA(5);
     ctx.setB(3);
     ctx.setOperation(Operation::ADD);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 8);
 }
 TEST(CalculatorTest, SubTwoNumbers) {
@@ -17,8 +16,7 @@ TEST(CalculatorTest, SubTwoNumbers) {
     ctx.setA(10);
     ctx.setB(4);
     ctx.setOperation(Operation::SUB);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 6);
 }
 TEST(CalculatorTest, MulTwoNumbers) {
@@ -26,8 +24,7 @@ TEST(CalculatorTest, MulTwoNumbers) {
     ctx.setA(6);
     ctx.setB(7);
     ctx.setOperation(Operation::MUL);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 42);
 }
 TEST(CalculatorTest, DivTwoNumbers) {
@@ -35,8 +32,7 @@ TEST(CalculatorTest, DivTwoNumbers) {
     ctx.setA(20);
     ctx.setB(4);
     ctx.setOperation(Operation::DIV);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 5);
 }
 TEST(CalculatorTest, PowOfNumber) {
@@ -44,16 +40,14 @@ TEST(CalculatorTest, PowOfNumber) {
     ctx.setA(2);
     ctx.setB(3);
     ctx.setOperation(Operation::POW);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 8);
 }
 TEST(CalculatorTest, FactOfNumber) {
     Context ctx;
     ctx.setA(5);
     ctx.setOperation(Operation::FACT);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 120);
 }
 
@@ -62,16 +56,14 @@ TEST(CalculatorTest, FactOfZero) {
     Context ctx;
     ctx.setA(0);
     ctx.setOperation(Operation::FACT);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 1);
 }
 TEST(CalculatorTest, FactOfBigNum) {
     Context ctx;
     ctx.setA(15);
     ctx.setOperation(Operation::FACT);
-    Calculator calc;
-    EXPECT_THROW(calc.calculate(ctx), std::exception);
+    EXPECT_THROW(Calculator::calculate(ctx), std::exception);
 }
 
 // Power edge cases
@@ -80,8 +72,7 @@ TEST(CalculatorTest, ZeroPowOfZero) {
     ctx.setA(0);
     ctx.setB(0);
     ctx.setOperation(Operation::POW);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 1);
 }
 TEST(CalculatorTest, AnyPowOfZero) {
@@ -89,8 +80,7 @@ TEST(CalculatorTest, AnyPowOfZero) {
     ctx.setA(2657);
     ctx.setB(0);
     ctx.setOperation(Operation::POW);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 1);
 }
 TEST(CalculatorTest, ZeroPowOfAny) {
@@ -98,8 +88,7 @@ TEST(CalculatorTest, ZeroPowOfAny) {
     ctx.setA(0);
     ctx.setB(395);
     ctx.setOperation(Operation::POW);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 0);
 }
 
@@ -109,8 +98,7 @@ TEST(CalculatorTest, AddNegativeNums) {
     ctx.setA(-5);
     ctx.setB(-3);
     ctx.setOperation(Operation::ADD);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), -8);
 }
 TEST(CalculatorTest, SubWithNegativeResult) {
@@ -118,8 +106,7 @@ TEST(CalculatorTest, SubWithNegativeResult) {
     ctx.setA(3);
     ctx.setB(10);
     ctx.setOperation(Operation::SUB);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), -7);
 }
 TEST(CalculatorTest, MulNegativeNums) {
@@ -127,8 +114,7 @@ TEST(CalculatorTest, MulNegativeNums) {
     ctx.setA(-5);
     ctx.setB(-3);
     ctx.setOperation(Operation::MUL);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 15);
 }
 TEST(CalculatorTest, DivNegativeNums) {
@@ -136,8 +122,7 @@ TEST(CalculatorTest, DivNegativeNums) {
     ctx.setA(-20);
     ctx.setB(-4);
     ctx.setOperation(Operation::DIV);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 5);
 }
 
@@ -147,8 +132,7 @@ TEST(CalculatorTest, MulByZero) {
     ctx.setA(5);
     ctx.setB(0);
     ctx.setOperation(Operation::MUL);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 0);
 }
 TEST(CalculatorTest, DivZero) {
@@ -156,8 +140,7 @@ TEST(CalculatorTest, DivZero) {
     ctx.setA(0);
     ctx.setB(5);
     ctx.setOperation(Operation::DIV);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 0);
 }
 
@@ -167,8 +150,7 @@ TEST(CalculatorTest, IntegerDivWithRemainder) {
     ctx.setA(7);
     ctx.setB(2);
     ctx.setOperation(Operation::DIV);
-    Calculator calc;
-    calc.calculate(ctx);
+    Calculator::calculate(ctx);
     EXPECT_EQ(ctx.getResult(), 3);
 }
 
@@ -178,6 +160,5 @@ TEST(CalculatorTest, PowOverflow) {
     ctx.setA(2);
     ctx.setB(31);
     ctx.setOperation(Operation::POW);
-    Calculator calc;
-    EXPECT_THROW(calc.calculate(ctx), std::exception);
+    EXPECT_THROW(Calculator::calculate(ctx), std::exception);
 }
