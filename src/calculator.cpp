@@ -9,29 +9,29 @@ void Calculator::calculate(Context& ctx) {
     
     calc_math::MathCode code = calc_math::OK;
     int result = 0;
-    switch (ctx.getOperation()) {
+    switch (ctx.operation_) {
         case Operation::ADD:
-            code = calc_math::add(ctx.getA(), ctx.getB(), result);
+            code = calc_math::add(ctx.a_, ctx.b_, result);
             break;        
         case Operation::SUB:
-            code = calc_math::sub(ctx.getA(), ctx.getB(), result);
+            code = calc_math::sub(ctx.a_, ctx.b_, result);
             break;
         case Operation::MUL:
-            code = calc_math::mul(ctx.getA(), ctx.getB(), result);
+            code = calc_math::mul(ctx.a_, ctx.b_, result);
             break;
         case Operation::DIV:
-            code = calc_math::div(ctx.getA(), ctx.getB(), result);
+            code = calc_math::div(ctx.a_, ctx.b_, result);
             break;
         case Operation::POW:
-            code = calc_math::pow(ctx.getA(), ctx.getB(), result);
+            code = calc_math::pow(ctx.a_, ctx.b_, result);
             break;
         case Operation::FACT:
-            code = calc_math::fact(ctx.getA(), result);
+            code = calc_math::fact(ctx.a_, result);
             break;
         default: break;
     }
     
-    ctx.setResult(result);
+    ctx.result_ = result;
 
     if (code != calc_math::OK) {
         Logger::instance().error(math_error_name(code));

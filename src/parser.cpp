@@ -35,10 +35,10 @@ void Parser::parse_args(int argc, char** argv, Context& ctx) {
     }
     try {
         json data = json::parse(argv[1]);
-        ctx.setOperation(parse_op(data));
-        ctx.setA(data.at("a").get<int>());
-        if (ctx.getOperation() != Operation::FACT) {
-            ctx.setB(data.at("b").get<int>());
+        ctx.operation_ = parse_op(data);
+        ctx.a_ = data.at("a").get<int>();
+        if (ctx.operation_ != Operation::FACT) {
+            ctx.b_ = data.at("b").get<int>();
         }
     }
     catch (const json::exception& e) {

@@ -12,54 +12,59 @@ TEST(CheckerTest, missedOperation) {
 // Argument tests
 TEST(CheckerTest, missedFirstArg) {
     Context ctx;
-    ctx.setOperation(Operation::ADD);
+    ctx.operation_ = Operation::ADD;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, missedSecondArg) {
     Context ctx;
-    ctx.setOperation(Operation::ADD);
-    ctx.setA(5);
+    ctx.operation_ = Operation::ADD;
+    ctx.a_ = 5;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 
 // Specific operation rules
 TEST(CheckerTest, negativeExponent) {
     Context ctx;
-    ctx.setOperation(Operation::POW);
-    ctx.setA(2);
-    ctx.setB(-3);
+    ctx.operation_ = Operation::POW;
+    ctx.a_ = 2;
+    ctx.b_ = -3;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, zeroExponent) {
     Context ctx;
-    ctx.setOperation(Operation::POW);
-    ctx.setA(2);
-    ctx.setB(0);
+    ctx.operation_ = Operation::POW;
+    ctx.a_ = 2;
+    ctx.b_ = 0;
+    ctx.hasA_ = true;
+    ctx.hasB_ = true;
     EXPECT_NO_THROW(Checker::check_args(ctx));
 }
 TEST(CheckerTest, negativeFact) {
     Context ctx;
-    ctx.setOperation(Operation::FACT);
-    ctx.setA(-5);
+    ctx.operation_ = Operation::FACT;
+    ctx.a_ = -5;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, validFact) {
     Context ctx;
-    ctx.setOperation(Operation::FACT);
-    ctx.setA(5);
+    ctx.operation_ = Operation::FACT;
+    ctx.a_ = 5;
+    ctx.hasA_ = true;
     EXPECT_NO_THROW(Checker::check_args(ctx));
 }
 TEST(CheckerTest, divisionByZero) {
     Context ctx;
-    ctx.setOperation(Operation::DIV);
-    ctx.setA(10);
-    ctx.setB(0);
+    ctx.operation_ = Operation::DIV;
+    ctx.a_ = 10;
+    ctx.b_ = 0;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, negativeDivision) {
     Context ctx;
-    ctx.setOperation(Operation::DIV);
-    ctx.setA(-10);
-    ctx.setB(2);
+    ctx.operation_ = Operation::DIV;
+    ctx.a_ = -10;
+    ctx.b_ = 2;
+    ctx.hasA_ = true;
+    ctx.hasB_ = true;
     EXPECT_NO_THROW(Checker::check_args(ctx));
 }

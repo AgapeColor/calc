@@ -5,160 +5,160 @@
 // Basic operations
 TEST(CalculatorTest, AddTwoNumbers) {
     Context ctx;
-    ctx.setA(5);
-    ctx.setB(3);
-    ctx.setOperation(Operation::ADD);
+    ctx.a_ = 5;
+    ctx.b_ = 3;
+    ctx.operation_ = Operation::ADD;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 8);
+    EXPECT_EQ(ctx.result_, 8);
 }
 TEST(CalculatorTest, SubTwoNumbers) {
     Context ctx;
-    ctx.setA(10);
-    ctx.setB(4);
-    ctx.setOperation(Operation::SUB);
+    ctx.a_ = 10;
+    ctx.b_ = 4;
+    ctx.operation_ = Operation::SUB;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 6);
+    EXPECT_EQ(ctx.result_, 6);
 }
 TEST(CalculatorTest, MulTwoNumbers) {
     Context ctx;
-    ctx.setA(6);
-    ctx.setB(7);
-    ctx.setOperation(Operation::MUL);
+    ctx.a_ = 6;
+    ctx.b_ = 7;
+    ctx.operation_ = Operation::MUL;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 42);
+    EXPECT_EQ(ctx.result_, 42);
 }
 TEST(CalculatorTest, DivTwoNumbers) {
     Context ctx;
-    ctx.setA(20);
-    ctx.setB(4);
-    ctx.setOperation(Operation::DIV);
+    ctx.a_ = 20;
+    ctx.b_ = 4;
+    ctx.operation_ = Operation::DIV;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 5);
+    EXPECT_EQ(ctx.result_, 5);
 }
 TEST(CalculatorTest, PowOfNumber) {
     Context ctx;
-    ctx.setA(2);
-    ctx.setB(3);
-    ctx.setOperation(Operation::POW);
+    ctx.a_ = 2;
+    ctx.b_ = 3;
+    ctx.operation_ = Operation::POW;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 8);
+    EXPECT_EQ(ctx.result_, 8);
 }
 TEST(CalculatorTest, FactOfNumber) {
     Context ctx;
-    ctx.setA(5);
-    ctx.setOperation(Operation::FACT);
+    ctx.a_ = 5;
+    ctx.operation_ = Operation::FACT;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 120);
+    EXPECT_EQ(ctx.result_, 120);
 }
 
 // Factorial edge cases
 TEST(CalculatorTest, FactOfZero) {
     Context ctx;
-    ctx.setA(0);
-    ctx.setOperation(Operation::FACT);
+    ctx.a_ = 0;
+    ctx.operation_ = Operation::FACT;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 1);
+    EXPECT_EQ(ctx.result_, 1);
 }
 TEST(CalculatorTest, FactOfBigNum) {
     Context ctx;
-    ctx.setA(15);
-    ctx.setOperation(Operation::FACT);
+    ctx.a_ = 15;
+    ctx.operation_ = Operation::FACT;
     EXPECT_THROW(Calculator::calculate(ctx), std::exception);
 }
 
 // Power edge cases
 TEST(CalculatorTest, ZeroPowOfZero) {
     Context ctx;
-    ctx.setA(0);
-    ctx.setB(0);
-    ctx.setOperation(Operation::POW);
+    ctx.a_ = 0;
+    ctx.b_ = 0;
+    ctx.operation_ = Operation::POW;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 1);
+    EXPECT_EQ(ctx.result_, 1);
 }
 TEST(CalculatorTest, AnyPowOfZero) {
     Context ctx;
-    ctx.setA(2657);
-    ctx.setB(0);
-    ctx.setOperation(Operation::POW);
+    ctx.a_ = 2657;
+    ctx.b_ = 0;
+    ctx.operation_ = Operation::POW;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 1);
+    EXPECT_EQ(ctx.result_, 1);
 }
 TEST(CalculatorTest, ZeroPowOfAny) {
     Context ctx;
-    ctx.setA(0);
-    ctx.setB(395);
-    ctx.setOperation(Operation::POW);
+    ctx.a_ = 0;
+    ctx.b_ = 395;
+    ctx.operation_ = Operation::POW;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 0);
+    EXPECT_EQ(ctx.result_, 0);
 }
 
 // Negative numbers
 TEST(CalculatorTest, AddNegativeNums) {
     Context ctx;
-    ctx.setA(-5);
-    ctx.setB(-3);
-    ctx.setOperation(Operation::ADD);
+    ctx.a_ = -5;
+    ctx.b_ = -3;
+    ctx.operation_ = Operation::ADD;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), -8);
+    EXPECT_EQ(ctx.result_, -8);
 }
 TEST(CalculatorTest, SubWithNegativeResult) {
     Context ctx;
-    ctx.setA(3);
-    ctx.setB(10);
-    ctx.setOperation(Operation::SUB);
+    ctx.a_ = 3;
+    ctx.b_ = 10;
+    ctx.operation_ = Operation::SUB;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), -7);
+    EXPECT_EQ(ctx.result_, -7);
 }
 TEST(CalculatorTest, MulNegativeNums) {
     Context ctx;
-    ctx.setA(-5);
-    ctx.setB(-3);
-    ctx.setOperation(Operation::MUL);
+    ctx.a_ = -5;
+    ctx.b_ = -3;
+    ctx.operation_ = Operation::MUL;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 15);
+    EXPECT_EQ(ctx.result_, 15);
 }
 TEST(CalculatorTest, DivNegativeNums) {
     Context ctx;
-    ctx.setA(-20);
-    ctx.setB(-4);
-    ctx.setOperation(Operation::DIV);
+    ctx.a_ = -20;
+    ctx.b_ = -4;
+    ctx.operation_ = Operation::DIV;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 5);
+    EXPECT_EQ(ctx.result_, 5);
 }
 
 // Operations with zero
 TEST(CalculatorTest, MulByZero) {
     Context ctx;
-    ctx.setA(5);
-    ctx.setB(0);
-    ctx.setOperation(Operation::MUL);
+    ctx.a_ = 5;
+    ctx.b_ = 0;
+    ctx.operation_ = Operation::MUL;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 0);
+    EXPECT_EQ(ctx.result_, 0);
 }
 TEST(CalculatorTest, DivZero) {
     Context ctx;
-    ctx.setA(0);
-    ctx.setB(5);
-    ctx.setOperation(Operation::DIV);
+    ctx.a_ = 0;
+    ctx.b_ = 5;
+    ctx.operation_ = Operation::DIV;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 0);
+    EXPECT_EQ(ctx.result_, 0);
 }
 
 // Integer division
 TEST(CalculatorTest, IntegerDivWithRemainder) {
     Context ctx;
-    ctx.setA(7);
-    ctx.setB(2);
-    ctx.setOperation(Operation::DIV);
+    ctx.a_ = 7;
+    ctx.b_ = 2;
+    ctx.operation_ = Operation::DIV;
     Calculator::calculate(ctx);
-    EXPECT_EQ(ctx.getResult(), 3);
+    EXPECT_EQ(ctx.result_, 3);
 }
 
 // Overflow 
 TEST(CalculatorTest, PowOverflow) {
     Context ctx;
-    ctx.setA(2);
-    ctx.setB(31);
-    ctx.setOperation(Operation::POW);
+    ctx.a_ = 2;
+    ctx.b_ = 31;
+    ctx.operation_ = Operation::POW;
     EXPECT_THROW(Calculator::calculate(ctx), std::exception);
 }

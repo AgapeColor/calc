@@ -28,7 +28,7 @@ TEST(ParserTest, missedOperation) {
     char argv1[] = "{\"a\":5,\"b\":3}";
     char* argv[] = {argv0, argv1};
     parser.parse_args(2, argv, ctx);
-    EXPECT_EQ(ctx.getOperation(), Operation::NONE);
+    EXPECT_EQ(ctx.operation_, Operation::NONE);
 }
 TEST(ParserTest, unknownOperation) {
     Context ctx;
@@ -37,7 +37,7 @@ TEST(ParserTest, unknownOperation) {
     char argv1[] = "{\"op\":\"unknown\",\"a\":5,\"b\":3}";
     char* argv[] = {argv0, argv1};
     EXPECT_NO_THROW(parser.parse_args(2, argv, ctx));
-    EXPECT_EQ(ctx.getOperation(), Operation::NONE);
+    EXPECT_EQ(ctx.operation_, Operation::NONE);
 }
 TEST(ParserTest, validAddOperation) {
     Context ctx;
@@ -46,9 +46,9 @@ TEST(ParserTest, validAddOperation) {
     char argv1[] = "{\"op\":\"add\",\"a\":5,\"b\":3}";
     char* argv[] = {argv0, argv1};
     parser.parse_args(2, argv, ctx);
-    EXPECT_EQ(ctx.getOperation(), Operation::ADD);
-    EXPECT_EQ(ctx.getA(), 5);
-    EXPECT_EQ(ctx.getB(), 3);
+    EXPECT_EQ(ctx.operation_, Operation::ADD);
+    EXPECT_EQ(ctx.a_, 5);
+    EXPECT_EQ(ctx.b_, 3);
 }
 TEST(ParserTest, validSubOperation) {
     Context ctx;
@@ -57,9 +57,9 @@ TEST(ParserTest, validSubOperation) {
     char argv1[] = "{\"op\":\"sub\",\"a\":5,\"b\":3}";
     char* argv[] = {argv0, argv1};
     parser.parse_args(2, argv, ctx);
-    EXPECT_EQ(ctx.getOperation(), Operation::SUB);
-    EXPECT_EQ(ctx.getA(), 5);
-    EXPECT_EQ(ctx.getB(), 3);
+    EXPECT_EQ(ctx.operation_, Operation::SUB);
+    EXPECT_EQ(ctx.a_, 5);
+    EXPECT_EQ(ctx.b_, 3);
 }
 TEST(ParserTest, validMulOperation) {
     Context ctx;
@@ -68,9 +68,9 @@ TEST(ParserTest, validMulOperation) {
     char argv1[] = "{\"op\":\"mul\",\"a\":5,\"b\":3}";
     char* argv[] = {argv0, argv1};
     parser.parse_args(2, argv, ctx);
-    EXPECT_EQ(ctx.getOperation(), Operation::MUL);
-    EXPECT_EQ(ctx.getA(), 5);
-    EXPECT_EQ(ctx.getB(), 3);
+    EXPECT_EQ(ctx.operation_, Operation::MUL);
+    EXPECT_EQ(ctx.a_, 5);
+    EXPECT_EQ(ctx.b_, 3);
 }
 TEST(ParserTest, validDivOperation) {
     Context ctx;
@@ -79,9 +79,9 @@ TEST(ParserTest, validDivOperation) {
     char argv1[] = "{\"op\":\"div\",\"a\":5,\"b\":3}";
     char* argv[] = {argv0, argv1};
     parser.parse_args(2, argv, ctx);
-    EXPECT_EQ(ctx.getOperation(), Operation::DIV);
-    EXPECT_EQ(ctx.getA(), 5);
-    EXPECT_EQ(ctx.getB(), 3);
+    EXPECT_EQ(ctx.operation_, Operation::DIV);
+    EXPECT_EQ(ctx.a_, 5);
+    EXPECT_EQ(ctx.b_, 3);
 }
 TEST(ParserTest, validPowOperation) {
     Context ctx;
@@ -90,9 +90,9 @@ TEST(ParserTest, validPowOperation) {
     char argv1[] = "{\"op\":\"pow\",\"a\":5,\"b\":3}";
     char* argv[] = {argv0, argv1};
     parser.parse_args(2, argv, ctx);
-    EXPECT_EQ(ctx.getOperation(), Operation::POW);
-    EXPECT_EQ(ctx.getA(), 5);
-    EXPECT_EQ(ctx.getB(), 3);
+    EXPECT_EQ(ctx.operation_, Operation::POW);
+    EXPECT_EQ(ctx.a_, 5);
+    EXPECT_EQ(ctx.b_, 3);
 }
 TEST(ParserTest, validFactOperation) {
     Context ctx;
@@ -101,8 +101,8 @@ TEST(ParserTest, validFactOperation) {
     char argv1[] = "{\"op\":\"fact\",\"a\":5}";
     char* argv[] = {argv0, argv1};
     parser.parse_args(2, argv, ctx);
-    EXPECT_EQ(ctx.getOperation(), Operation::FACT);
-    EXPECT_EQ(ctx.getA(), 5);
+    EXPECT_EQ(ctx.operation_, Operation::FACT);
+    EXPECT_EQ(ctx.a_, 5);
 }
 
 // Argument tests

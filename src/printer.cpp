@@ -4,7 +4,7 @@
 #include <iostream>
 
 void Printer::print_result(const Context& ctx) {
-    std::cout << "Result: " << ctx.getResult() << std::endl;
+    std::cout << "Result: " << ctx.result_ << std::endl;
 }
 
 void Printer::print_help(const char* appName) {
