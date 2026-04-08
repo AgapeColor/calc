@@ -19,6 +19,7 @@ TEST(CheckerTest, missedSecondArg) {
     Context ctx;
     ctx.operation_ = Operation::ADD;
     ctx.a_ = 5;
+    ctx.hasA_ = true;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 
@@ -28,6 +29,8 @@ TEST(CheckerTest, negativeExponent) {
     ctx.operation_ = Operation::POW;
     ctx.a_ = 2;
     ctx.b_ = -3;
+    ctx.hasA_ = true;
+    ctx.hasB_ = true;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, zeroExponent) {
@@ -43,6 +46,7 @@ TEST(CheckerTest, negativeFact) {
     Context ctx;
     ctx.operation_ = Operation::FACT;
     ctx.a_ = -5;
+    ctx.hasA_ = true;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, validFact) {
@@ -57,6 +61,8 @@ TEST(CheckerTest, divisionByZero) {
     ctx.operation_ = Operation::DIV;
     ctx.a_ = 10;
     ctx.b_ = 0;
+    ctx.hasA_ = true;
+    ctx.hasB_ = true;
     EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, negativeDivision) {

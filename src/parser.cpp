@@ -37,8 +37,10 @@ void Parser::parse_args(int argc, char** argv, Context& ctx) {
         json data = json::parse(argv[1]);
         ctx.operation_ = parse_op(data);
         ctx.a_ = data.at("a").get<int>();
+        ctx.hasA_ = true;
         if (ctx.operation_ != Operation::FACT) {
             ctx.b_ = data.at("b").get<int>();
+            ctx.hasB_ = true;
         }
     }
     catch (const json::exception& e) {
