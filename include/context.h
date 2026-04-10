@@ -1,6 +1,6 @@
 #pragma once
 
-enum Operation {
+enum class Operation {
     NONE = 0,
     ADD,
     SUB,
@@ -10,24 +10,18 @@ enum Operation {
     FACT
 };
 
-enum AppCode {
-    OK = 0,
-    BAD_ARGS = 7,
-    CHECK_FAILED = 8,
-    CALC_FAILED = 9
-};
-
 struct Context {
-    Operation operation = NONE;
+    Context() = default;
+    Context(const Context& obj) = default;
+    Context(Context&& obj) = default;
+    Context& operator=(const Context& obj) = default;
+    Context& operator=(Context&& obj) = default;
+    ~Context() = default;
 
-    int a = 0;
-    int b = 0;
-    
-    bool has_a = false;
-    bool has_b = false;
-    
-    int result = 0;
-    
-    AppCode app_code = OK;
-    int math_code = 0;
+    Operation operation_ = Operation::NONE;
+    int a_ = 0;
+    int b_ = 0;
+    bool hasA_ = false;
+    bool hasB_ = false;
+    int result_ = 0;
 };

@@ -2,6 +2,14 @@
 
 #include "context.h"
 
-int parse_args(int argc, char** argv, Context& ctx);
+class Parser {
+public:
+    Parser() = default;
+    Parser(const Parser& obj) = default;
+    Parser(Parser&& obj) = default;
+    Parser& operator=(const Parser& obj) = default;
+    Parser& operator=(Parser&& obj) = default;
+    ~Parser() = default;
 
-void print_help(const char* app);
+    void parse_args(int argc, char** argv, Context& ctx);
+};

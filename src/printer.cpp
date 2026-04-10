@@ -1,26 +1,26 @@
 #include "printer.h"
-#include "calc_math.h"
+#include "context.h"
 
-#include <stdio.h>
+#include <iostream>
 
-static const char* math_error_name(int errorCode) {
-    switch (errorCode) {
-        case calc_math::OVERFLOW:      return "overflow";
-        case calc_math::DIV_BY_ZERO:   return "division by zero";
-        case calc_math::INVALID_INPUT: return "invalid input";
-        default:                       return "none";
-    }
+void Printer::print_result(const Context& ctx) {
+    std::cout << "Result: " << ctx.result_ << std::endl;
 }
 
-void print_result(Context& ctx) {
-    if (ctx.app_code != OK) {
-        printf("Error: bad input or check failed (app_code: %d)\n", ctx.app_code);
-        return;
-    }
-    if (ctx.math_code != calc_math::OK) {
-        printf("Math error: %s (code=%d)\n", math_error_name(ctx.math_code), ctx.math_code);
-        return;
-    }
+void Printer::print_help(const char* appName) {
+    using namespace std;
 
-    printf("Result: %d\n", ctx.result);
+    cout << "Usage:"                                                 << endl;
+    cout << "  " << appName << " '{\"op\":\"add\",\"a\":2,\"b\":3}'" << endl;
+    cout << "  " << appName << " '{\"op\":\"fact\",\"a\":5}'"        << endl;
+
+    cout << "\nJSON format:"                                 << endl;
+    cout << "  op  - operation: add|sub|mul|div|pow|fact"    << endl;
+    cout << "  a   - first integer"                          << endl;
+    cout << "  b   - second integer (not required for fact)" << endl;
+    
+    cout << "\nExamples:"                           << endl;
+    cout << "  '{\"op\":\"sub\",\"a\":10,\"b\":5}'" << endl;
+    cout << "  '{\"op\":\"pow\",\"a\":2,\"b\":8}'"  << endl;
+    cout << "  '{\"op\":\"fact\",\"a\":5}'"         << endl;
 }

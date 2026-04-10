@@ -1,11 +1,16 @@
 # calc
 
-CLI-калькулятор для целых чисел (`long long`) с обработкой ошибок (overflow / деление на 0 / неверный ввод).
+CLI-калькулятор для целых чисел (`int`) с обработкой ошибок (overflow / деление на 0 / неверный ввод).
 
-## Зависимость
+## Зависимости
 
-Математика вынесена в отдельную header-only библиотеку **calc-math** (подключается через **CMake FetchContent**).
-Repo: `https://github.com/AgapeColor/calc-math.git`
+Подключаются через **CMake FetchContent**:
+
+* **calc-math** — header-only библиотека с математическими операциями.
+    Repo: `https://github.com/AgapeColor/calc-math.git`
+* **nlohmann/json** — парсинг JSON-аргументов
+* **spdlog** — логирование
+* **googletest** — юнит-тесты
 
 ## Операции
 
@@ -21,34 +26,34 @@ sudo cmake --build build --target install
 
 ## Использование
 
-Парсинг аргументов: `getopt_long`.
+Программа принимает один аргумент — JSON-строку.
 
 После установки:
 
 ```bash
-calc -h
-calc -o add  -a 2 -b 3
-calc -o div  -a 10 -b 2
-calc -o pow  -a 2 -b 10
-calc -o fact -a 5
+calc --help
+calc '{"op":"add","a":2,"b":3}'
+calc '{"op":"div","a":10,"b":2}'
+calc '{"op":"pow","a":2,"b":10}'
+calc '{"op":"fact","a":5}'
 ```
 
 Или без установки (из директории сборки):
 
 ```bash
-./build/calc -h
-./build/calc -o add -a 2 -b 3
-./build/calc -o div  -a 10 -b 2
-./build/calc -o pow  -a 2 -b 10
-./build/calc -o fact -a 5
+./build/calc --help
+./build/calc '{"op":"add","a":2,"b":3}'
+./build/calc '{"op":"div","a":10,"b":2}'
+./build/calc '{"op":"pow","a":2,"b":10}'
+./build/calc '{"op":"fact","a":5}'
+
 ```
 
-Опции: 
+JSON-формат:
 
-* `-o, --op   add|sub|mul|div|pow|fact`
-* `-a, --a    first integer`
-* `-b, --b    second integer (not for fact)`
-* `-h, --help show help`
+* `op — операция: add|sub|mul|div|pow|fact`
+* `a — первый операнд`
+* `b — второй операнд (не требуется для fact)`
 
 ## Архитектура
 
