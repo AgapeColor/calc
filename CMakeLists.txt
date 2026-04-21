@@ -79,6 +79,7 @@ add_executable(calc
     src/calculator.cpp
     src/printer.cpp
     src/logger.cpp
+    src/postgres_connection.cpp
 )
 
 target_include_directories(calc
