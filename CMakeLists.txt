@@ -35,6 +35,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(calc_math json googletest spdlog)
 
+find_package(PostgreSQL REQUIRED)
+
 enable_testing()
 
 # clang-tidy
@@ -89,6 +91,7 @@ target_link_libraries(calc
     calc_math
     nlohmann_json::nlohmann_json
     spdlog::spdlog
+    PostgreSQL::PostgreSQL
 )
 
 # Tests
