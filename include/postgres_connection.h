@@ -3,6 +3,8 @@
 #include <postgresql/libpq-fe.h>
 #include <string>
 
+class PostgresResult;
+
 class PostgresConnection {
 public:
     PostgresConnection(const std::string& connectionString);
@@ -13,6 +15,8 @@ public:
     PostgresConnection& operator=(PostgresConnection&& obj) = delete;
 
     ~PostgresConnection();
+
+    PostgresResult executeQuery(const std::string& query);
 
 private:
     PGconn* conn_ = nullptr;
