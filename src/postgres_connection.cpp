@@ -5,7 +5,7 @@
 #include <string>
 
 PostgresConnection::PostgresConnection(const std::string& connectionString) {
-    Logger::instance().debug("Connecting to database...");
+    Logger::instance().debug("Connecting to database");
     conn_ = PQconnectdb(connectionString.c_str());
 
     if (conn_ == nullptr) {
@@ -21,7 +21,7 @@ PostgresConnection::PostgresConnection(const std::string& connectionString) {
         throw std::runtime_error(error);
     }
 
-    Logger::instance().debug("Connected to database");
+    Logger::instance().debug("Database connection established");
 }
 
 PostgresConnection::~PostgresConnection() {
@@ -29,5 +29,4 @@ PostgresConnection::~PostgresConnection() {
         PQfinish(conn_);
         Logger::instance().debug("Database connection closed");
     }
-    conn_ = nullptr;
 }
