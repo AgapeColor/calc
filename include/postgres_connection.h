@@ -1,6 +1,7 @@
 #pragma once
 
 #include <postgresql/libpq-fe.h>
+#include <memory>
 #include <string>
 
 class PostgresResult;
@@ -19,5 +20,12 @@ public:
     PostgresResult executeQuery(const std::string& query);
 
 private:
-    PGconn* conn_ = nullptr;
+    struct connDeleter {
+        void operator()(PGconn* conn) const noexcept {
+            if (conn) {
+                PQfinish(conn);
+            }
+        }
+    };
+    std::unique_ptr<PGconn, connDeleter> conn_;
 };

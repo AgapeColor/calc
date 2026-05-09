@@ -7,17 +7,16 @@
 
 PostgresConnection::PostgresConnection(const std::string& connectionString) {
     Logger::instance().debug("Connecting to database");
-    conn_ = PQconnectdb(connectionString.c_str());
 
-    if (conn_ == nullptr) {
+    conn_.reset(PQconnectdb(connectionString.c_str()));
+
+    if (!conn_) {
         Logger::instance().error("Failed to create database connection object");
         throw std::runtime_error("Failed to create database connection object");
     }
 
-    if (PQstatus(conn_) != CONNECTION_OK) {
-        std::string error = PQerrorMessage(conn_);
-        PQfinish(conn_);
-        conn_ = nullptr;
+    if (PQstatus(conn_.get()) != CONNECTION_OK) {
+        std::string error = PQerrorMessage(conn_.get());
         Logger::instance().error("Database connection failed: " + error);
         throw std::runtime_error(error);
     }
@@ -26,8 +25,7 @@ PostgresConnection::PostgresConnection(const std::string& connectionString) {
 }
 
 PostgresConnection::~PostgresConnection() {
-    if (conn_ != nullptr) {
-        PQfinish(conn_);
+    if (conn_) {
         Logger::instance().debug("Database connection closed");
     }
 }
@@ -35,23 +33,21 @@ PostgresConnection::~PostgresConnection() {
 PostgresResult PostgresConnection::executeQuery(const std::string& query) {
     Logger::instance().debug("Executing query");
 
-    PGresult* rawRes = PQexec(conn_, query.c_str());
+    PostgresResult result(PQexec(conn_.get(), query.c_str()));
 
-    if (rawRes == nullptr) {
-        Logger::instance().error("Query execution failed: null result");
-        throw std::runtime_error("Query execution failed: null result");
+    if (!result.get()) {
+        std::string error = PQerrorMessage(conn_.get());
+        Logger::instance().error("Query execution failed: " + error);
+        throw std::runtime_error("Query execution failed: " + error);
     }
 
-    ExecStatusType rawResStatus = PQresultStatus(rawRes);
-
-    if (rawResStatus != PGRES_TUPLES_OK && rawResStatus != PGRES_COMMAND_OK) {
-        std::string error = PQresultErrorMessage(rawRes);
-        PQclear(rawRes);
+    if (result.status() != PGRES_TUPLES_OK && result.status() != PGRES_COMMAND_OK) {
+        std::string error = result.errorMsg();
         Logger::instance().error("Query execution failed: " + error);
         throw std::runtime_error("Query execution failed: " + error);
     }
 
     Logger::instance().debug("Query executed successfully");
 
-    return PostgresResult(rawRes);
+    return result;
 }
