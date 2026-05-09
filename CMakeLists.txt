@@ -107,6 +107,7 @@ add_executable(calc_tests
     src/calculator.cpp
     src/printer.cpp
     src/logger.cpp
+    src/postgres_connection.cpp
 )
 
 target_include_directories(calc_tests
@@ -120,6 +121,7 @@ target_link_libraries(calc_tests
     calc_math
     nlohmann_json::nlohmann_json
     spdlog::spdlog
+    PostgreSQL::PostgreSQL
 )
 
 include(GoogleTest)

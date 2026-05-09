@@ -1,7 +1,7 @@
+#include "postgres_connection.h"
 #include "logger.h"
 #include "postgres_result.h"
 
-#include <postgres_connection.h>
 #include <stdexcept>
 #include <string>
 
@@ -35,7 +35,7 @@ PostgresResult PostgresConnection::executeQuery(const std::string& query) {
 
     PostgresResult result(PQexec(conn_.get(), query.c_str()));
 
-    if (!result.get()) {
+    if (result.get() == nullptr) {
         std::string error = PQerrorMessage(conn_.get());
         Logger::instance().error("Query execution failed: " + error);
         throw std::runtime_error("Query execution failed: " + error);
