@@ -32,7 +32,7 @@ void Calculator::calculate(Context& ctx) {
     }
     
     ctx.result_ = result;
-    ctx.mathCode = code;
+    ctx.mathCode_ = code;
 
     if (code != calc_math::OK) {
         Logger::instance().error(math_error_name(code));

@@ -80,6 +80,7 @@ add_executable(calc
     src/printer.cpp
     src/logger.cpp
     src/postgres_connection.cpp
+    src/operation_record.cpp
 )
 
 target_include_directories(calc
@@ -108,6 +109,7 @@ add_executable(calc_tests
     src/printer.cpp
     src/logger.cpp
     src/postgres_connection.cpp
+    src/operation_record.cpp
 )
 
 target_include_directories(calc_tests

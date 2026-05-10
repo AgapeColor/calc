@@ -1,6 +1,8 @@
 #include "postgres_connection.h"
 #include "logger.h"
 #include "postgres_result.h"
+#include "operation_record.h"
+#include "sql_queries.h"
 
 #include <stdexcept>
 #include <string>
@@ -68,7 +70,7 @@ PostgresResult PostgresConnection::executeParamQuery(const std::string& query, c
         )
     );
 
-    if (!result.get()) {
+    if (result.get() == nullptr) {
         std::string error = PQerrorMessage(conn_.get());
         Logger::instance().error("Parameterized query execution failed: " + error);
         throw std::runtime_error("Parameterized query execution failed: " + error);
@@ -83,4 +85,24 @@ PostgresResult PostgresConnection::executeParamQuery(const std::string& query, c
     Logger::instance().debug("Parameterized query executed successfully");
 
     return result;
+}
+
+void PostgresConnection::saveOperation(const OperationRecord& record) {
+    std::string arg1Str = std::to_string(record.arg1_);
+    std::string arg2Str = std::to_string(record.arg2_);
+    std::string resultStr;
+    if (record.result_.has_value()) {
+        resultStr = std::to_string(*record.result_);
+    }
+    std::string statusStr = std::to_string(record.status_);
+
+    std::vector<const char*> params = {
+        record.operation_.c_str(),
+        arg1Str.c_str(),
+        arg2Str.c_str(),
+        record.result_.has_value() ? resultStr.c_str() : nullptr,
+        statusStr.c_str()
+    };
+
+    executeParamQuery(SqlQueries::InsertOperation, params);
 }
