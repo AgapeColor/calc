@@ -19,6 +19,11 @@ public:
     std::string errorMsg() const { return PQresultErrorMessage(result_.get()); }
     PGresult* get() const { return result_.get(); }
 
+    int rowsCount() const { return PQntuples(result_.get()); }
+    int columnsCount() const { return PQnfields(result_.get()); }
+    bool isNull(int row, int col) const { return PQgetisnull(result_.get(), row, col); }
+    std::string cellValue(int row, int col) const { return std::string(PQgetvalue(result_.get(), row, col)); }
+
 private:
     struct resDeleter {
         void operator()(PGresult* result) const noexcept {
