@@ -22,6 +22,7 @@ public:
     PostgresResult executeQuery(const std::string& query);
     PostgresResult executeParamQuery(const std::string& query, const std::vector<const char*>& params);
     void saveOperation(const OperationRecord& record);
+    std::vector<OperationRecord> loadHistory();
 
 private:
     struct connDeleter {
