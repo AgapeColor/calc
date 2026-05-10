@@ -3,6 +3,7 @@
 #include <postgresql/libpq-fe.h>
 #include <memory>
 #include <string>
+#include <vector>
 
 class PostgresResult;
 
@@ -18,6 +19,7 @@ public:
     ~PostgresConnection();
 
     PostgresResult executeQuery(const std::string& query);
+    PostgresResult executeParamQuery(const std::string& query, const std::vector<const char*>& params);
 
 private:
     struct connDeleter {

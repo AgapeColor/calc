@@ -51,3 +51,36 @@ PostgresResult PostgresConnection::executeQuery(const std::string& query) {
 
     return result;
 }
+
+PostgresResult PostgresConnection::executeParamQuery(const std::string& query, const std::vector<const char*>& params) {
+    Logger::instance().debug("Executing parameterized query");
+
+    PostgresResult result(
+        PQexecParams(
+            conn_.get(),
+            query.c_str(),
+            static_cast<int>(params.size()),
+            nullptr,
+            params.data(),
+            nullptr,
+            nullptr,
+            0
+        )
+    );
+
+    if (!result.get()) {
+        std::string error = PQerrorMessage(conn_.get());
+        Logger::instance().error("Parameterized query execution failed: " + error);
+        throw std::runtime_error("Parameterized query execution failed: " + error);
+    }
+
+    if (result.status() != PGRES_TUPLES_OK && result.status() != PGRES_COMMAND_OK) {
+        std::string error = result.errorMsg();
+        Logger::instance().error("Parameterized query execution failed: " + error);
+        throw std::runtime_error("Parameterized query execution failed: " + error);
+    }
+
+    Logger::instance().debug("Parameterized query executed successfully");
+
+    return result;
+}
