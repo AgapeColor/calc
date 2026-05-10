@@ -10,7 +10,7 @@ struct OperationRecord {
 
     std::string operation_ = "";
     int arg1_ = 0;
-    int arg2_ = 0;
+    std::optional<int> arg2_;
     std::optional<int> result_;
     int status_ = 0;
 

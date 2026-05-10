@@ -89,17 +89,23 @@ PostgresResult PostgresConnection::executeParamQuery(const std::string& query, c
 
 void PostgresConnection::saveOperation(const OperationRecord& record) {
     std::string arg1Str = std::to_string(record.arg1_);
-    std::string arg2Str = std::to_string(record.arg2_);
+
+    std::string arg2Str;
+    if (record.arg2_.has_value()) {
+        arg2Str = std::to_string(*record.arg2_);
+    }
+
     std::string resultStr;
     if (record.result_.has_value()) {
         resultStr = std::to_string(*record.result_);
     }
+
     std::string statusStr = std::to_string(record.status_);
 
     std::vector<const char*> params = {
         record.operation_.c_str(),
         arg1Str.c_str(),
-        arg2Str.c_str(),
+        record.arg2_.has_value() ? arg2Str.c_str() : nullptr,
         record.result_.has_value() ? resultStr.c_str() : nullptr,
         statusStr.c_str()
     };

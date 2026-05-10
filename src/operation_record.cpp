@@ -6,7 +6,7 @@ OperationRecord OperationRecord::fromContext(const Context& ctx) {
     OperationRecord record;
     record.operation_ = convertOperation(ctx.operation_);
     record.arg1_ = ctx.a_;
-    record.arg2_ = ctx.b_;
+    record.arg2_ = ctx.hasB_ ? std::optional<int>(ctx.b_) : std::nullopt;
     record.result_ = (ctx.mathCode_ != 0) // 0 = success (MathCode::OK)
         ? std::nullopt
         : std::optional<int>(ctx.result_);
