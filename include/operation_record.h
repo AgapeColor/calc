@@ -5,8 +5,12 @@
 #include <string>
 #include <optional>
 
+class PostgresResult;
+
 struct OperationRecord {
     static OperationRecord fromContext(const Context& ctx);
+
+    static OperationRecord fromDatabase(const PostgresResult& result, int row);
 
     std::string operation_ = "";
     int arg1_ = 0;

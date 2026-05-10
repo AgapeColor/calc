@@ -2,7 +2,7 @@
 #include "logger.h"
 #include "postgres_result.h"
 #include "operation_record.h"
-#include "sql_queries.h"
+#include "sql.h"
 
 #include <stdexcept>
 #include <string>
@@ -111,4 +111,21 @@ void PostgresConnection::saveOperation(const OperationRecord& record) {
     };
 
     executeParamQuery(SqlQueries::InsertOperation, params);
+}
+
+std::vector<OperationRecord> PostgresConnection::loadHistory() {
+    Logger::instance().debug("Loading operations from database");   
+
+    PostgresResult result = executeQuery(SqlQueries::SelectAllOperations);
+    std::vector<OperationRecord> operations;
+
+    int rowsCount = result.rowsCount();
+
+    for (int row = 0; row < rowsCount; ++row) {
+        operations.push_back(OperationRecord::fromDatabase(result, row));
+    }
+
+    Logger::instance().info("Loaded " + std::to_string(rowsCount) + " operations from database");
+ 
+    return operations;
 }

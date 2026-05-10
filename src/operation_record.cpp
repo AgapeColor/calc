@@ -1,4 +1,6 @@
 #include "operation_record.h"
+#include "postgres_result.h"
+#include "sql.h"
 
 #include <stdexcept>
 
@@ -13,6 +15,20 @@ OperationRecord OperationRecord::fromContext(const Context& ctx) {
 
     record.status_ = ctx.mathCode_;
     
+    return record;
+}
+
+OperationRecord OperationRecord::fromDatabase(const PostgresResult& result, int row) {
+    OperationRecord record;
+    record.operation_ = result.cellValue(row, SqlColumns::Operation);
+    record.arg1_ = std::stoi(result.cellValue(row, SqlColumns::Arg1));
+    record.arg2_ = result.isNull(row, SqlColumns::Arg2)
+        ? std::nullopt
+        : std::optional<int>(std::stoi(result.cellValue(row, SqlColumns::Arg2)));
+    record.result_ = result.isNull(row, SqlColumns::Result)
+        ? std::nullopt
+        : std::optional<int>(std::stoi(result.cellValue(row, SqlColumns::Result)));
+    record.status_ = std::stoi(result.cellValue(row, SqlColumns::Status));
     return record;
 }
 

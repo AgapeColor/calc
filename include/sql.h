@@ -22,3 +22,11 @@ namespace SqlQueries {
         "result, "
         "status FROM operations WHERE status = 0";
 }
+
+namespace SqlColumns {
+    inline constexpr int Operation = 0;
+    inline constexpr int Arg1      = 1;
+    inline constexpr int Arg2      = 2;
+    inline constexpr int Result    = 3;
+    inline constexpr int Status    = 4;
+}
