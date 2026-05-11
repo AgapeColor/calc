@@ -15,13 +15,13 @@ public:
 
     ~PostgresResult() = default;
 
-    ExecStatusType status() const { return PQresultStatus(result_.get()); }
-    std::string errorMsg() const { return PQresultErrorMessage(result_.get()); }
-    PGresult* get() const { return result_.get(); }
+    ExecStatusType status() const noexcept { return PQresultStatus(result_.get()); }
+    std::string errorMsg() const noexcept { return PQresultErrorMessage(result_.get()); }
+    bool isValid() const noexcept { return result_ != nullptr; }
 
-    int rowsCount() const { return PQntuples(result_.get()); }
-    int columnsCount() const { return PQnfields(result_.get()); }
-    bool isNull(int row, int col) const { return PQgetisnull(result_.get(), row, col); }
+    int rowsCount() const noexcept { return PQntuples(result_.get()); }
+    int columnsCount() const noexcept { return PQnfields(result_.get()); }
+    bool isNull(int row, int col) const noexcept { return PQgetisnull(result_.get(), row, col); }
     std::string cellValue(int row, int col) const { return std::string(PQgetvalue(result_.get(), row, col)); }
 
 private:

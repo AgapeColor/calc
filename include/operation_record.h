@@ -12,6 +12,8 @@ struct OperationRecord {
 
     static OperationRecord fromDatabase(const PostgresResult& result, int row);
 
+    Context toContext() const;
+
     std::string operation_ = "";
     int arg1_ = 0;
     std::optional<int> arg2_;
@@ -19,5 +21,6 @@ struct OperationRecord {
     int status_ = 0;
 
 private:
-    static std::string convertOperation(Operation operation);
+    static std::string operationToString(Operation operation);
+    static Operation stringToOperation(const std::string& operation);
 };

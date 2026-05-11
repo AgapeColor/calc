@@ -37,7 +37,7 @@ PostgresResult PostgresConnection::executeQuery(const std::string& query) {
 
     PostgresResult result(PQexec(conn_.get(), query.c_str()));
 
-    if (result.get() == nullptr) {
+    if (!result.isValid()) {
         std::string error = PQerrorMessage(conn_.get());
         Logger::instance().error("Query execution failed: " + error);
         throw std::runtime_error("Query execution failed: " + error);
@@ -70,7 +70,7 @@ PostgresResult PostgresConnection::executeParamQuery(const std::string& query, c
         )
     );
 
-    if (result.get() == nullptr) {
+    if (!result.isValid()) {
         std::string error = PQerrorMessage(conn_.get());
         Logger::instance().error("Parameterized query execution failed: " + error);
         throw std::runtime_error("Parameterized query execution failed: " + error);
@@ -114,7 +114,7 @@ void PostgresConnection::saveOperation(const OperationRecord& record) {
 }
 
 std::vector<OperationRecord> PostgresConnection::loadHistory() {
-    Logger::instance().debug("Loading operations from database");   
+    Logger::instance().debug("Loading operations from database");
 
     PostgresResult result = executeQuery(SqlQueries::SelectAllOperations);
     std::vector<OperationRecord> operations;
@@ -125,7 +125,7 @@ std::vector<OperationRecord> PostgresConnection::loadHistory() {
         operations.push_back(OperationRecord::fromDatabase(result, row));
     }
 
-    Logger::instance().info("Loaded " + std::to_string(rowsCount) + " operations from database");
+    Logger::instance().debug("Loaded " + std::to_string(rowsCount) + " operations from database");
  
     return operations;
 }
