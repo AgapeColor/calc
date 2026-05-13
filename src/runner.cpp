@@ -9,8 +9,6 @@
 #include <stdexcept>
 
 void Runner::run(int argc, char** argv) {
-    Logger::instance().info("Application is started");
-
     PostgresConnection dataBase("host=localhost dbname=calc_db user=calc_user password=calc");
     dataBase.executeQuery(SqlQueries::CreateOperationsTable);
     
@@ -23,9 +21,11 @@ void Runner::run(int argc, char** argv) {
     OperationRecord dbRecord = OperationRecord::fromContext(ctx_);
 
     if (cache_.contains(dbRecord)) {
+        Logger::instance().debug("Cache hit");
         ctx_ = cache_.get(dbRecord).toContext();
     }
     else {
+        Logger::instance().debug("Cache miss, calculating...");
         std::exception_ptr savedException;
         try {
             Calculator::calculate(ctx_);
@@ -45,6 +45,4 @@ void Runner::run(int argc, char** argv) {
     }
 
     Printer::print_result(ctx_);
-
-    Logger::instance().info("Application is finished");
 }
