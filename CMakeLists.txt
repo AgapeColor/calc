@@ -70,6 +70,22 @@ if(ENABLE_CLANG_FORMAT)
     endif()
 endif()
 
+# Valgrind
+find_program(VALGRIND_EXE NAMES valgrind)
+
+if(VALGRIND_EXE)
+    add_custom_target(valgrind
+        COMMAND ${VALGRIND_EXE} --leak-check=full --track-origins=yes --error-exitcode=1
+                $<TARGET_FILE:calc> "{\"op\":\"add\",\"a\":2,\"b\":3}"
+            DEPENDS calc
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Running valgrind"
+            VERBATIM
+        )
+else()
+    message(WARNING "valgrind not found")
+endif()
+
 # Main executable
 add_executable(calc
     src/main.cpp
@@ -130,6 +146,17 @@ target_link_libraries(calc_tests
 
 include(GoogleTest)
 gtest_discover_tests(calc_tests)
+
+if(VALGRIND_EXE)
+    add_custom_target(valgrind_tests
+        COMMAND ${VALGRIND_EXE} --leak-check=full --track-origins=yes --error-exitcode=1
+                $<TARGET_FILE:calc_tests>
+        DEPENDS calc_tests
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running valgrind on tests"
+        VERBATIM
+    )
+endif()
 
 # Install
 include(GNUInstallDirs)
