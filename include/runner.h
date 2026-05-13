@@ -5,6 +5,7 @@
 #include "checker.h"
 #include "calculator.h"
 #include "printer.h"
+#include "cache.h"
 
 class Runner {
 public:
@@ -20,4 +21,5 @@ public:
 private:
     Context ctx_;
     Parser parser_;
+    Cache cache_;
 };

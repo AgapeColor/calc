@@ -5,9 +5,11 @@
 #include <iostream>
 
 int main(int argc, char** argv) {
+    Logger::instance().info("Application is started");
     try {
         Runner appRunner;
         appRunner.run(argc, argv);
+        Logger::instance().info("Application is finished");
         return 0;
     }
     catch (const std::exception& e) {

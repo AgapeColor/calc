@@ -36,4 +36,3 @@ void Logger::info(const std::string& msg)   { impl_->info(msg); }
 void Logger::warn(const std::string& msg)   { impl_->warn(msg); }
 void Logger::error(const std::string& msg)  { impl_->error(msg); }
 void Logger::debug(const std::string& msg)  { impl_->debug(msg); }
-

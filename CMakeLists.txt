@@ -35,6 +35,8 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(calc_math json googletest spdlog)
 
+find_package(PostgreSQL REQUIRED)
+
 enable_testing()
 
 # clang-tidy
@@ -68,6 +70,22 @@ if(ENABLE_CLANG_FORMAT)
     endif()
 endif()
 
+# Valgrind
+find_program(VALGRIND_EXE NAMES valgrind)
+
+if(VALGRIND_EXE)
+    add_custom_target(valgrind
+        COMMAND ${VALGRIND_EXE} --leak-check=full --track-origins=yes --error-exitcode=1
+                $<TARGET_FILE:calc> "{\"op\":\"add\",\"a\":2,\"b\":3}"
+            DEPENDS calc
+            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+            COMMENT "Running valgrind"
+            VERBATIM
+        )
+else()
+    message(WARNING "valgrind not found")
+endif()
+
 # Main executable
 add_executable(calc
     src/main.cpp
@@ -77,6 +95,9 @@ add_executable(calc
     src/calculator.cpp
     src/printer.cpp
     src/logger.cpp
+    src/postgres_connection.cpp
+    src/operation_record.cpp
+    src/cache.cpp
 )
 
 target_include_directories(calc
@@ -89,6 +110,7 @@ target_link_libraries(calc
     calc_math
     nlohmann_json::nlohmann_json
     spdlog::spdlog
+    PostgreSQL::PostgreSQL
 )
 
 # Tests
@@ -103,6 +125,9 @@ add_executable(calc_tests
     src/calculator.cpp
     src/printer.cpp
     src/logger.cpp
+    src/postgres_connection.cpp
+    src/operation_record.cpp
+    src/cache.cpp
 )
 
 target_include_directories(calc_tests
@@ -116,10 +141,22 @@ target_link_libraries(calc_tests
     calc_math
     nlohmann_json::nlohmann_json
     spdlog::spdlog
+    PostgreSQL::PostgreSQL
 )
 
 include(GoogleTest)
 gtest_discover_tests(calc_tests)
+
+if(VALGRIND_EXE)
+    add_custom_target(valgrind_tests
+        COMMAND ${VALGRIND_EXE} --leak-check=full --track-origins=yes --error-exitcode=1
+                $<TARGET_FILE:calc_tests>
+        DEPENDS calc_tests
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Running valgrind on tests"
+        VERBATIM
+    )
+endif()
 
 # Install
 include(GNUInstallDirs)
