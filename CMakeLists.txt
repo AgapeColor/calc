@@ -9,7 +9,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Project options
 option(ENABLE_CLANG_TIDY "Run clang-tidy during build" ON)
 option(ENABLE_CLANG_FORMAT "Add clang-format target" ON)
-option(ENABLE_PROFILING "Enable profiling with gprof" OFF)
 
 # Dependencies
 include(FetchContent)
@@ -113,11 +112,6 @@ target_link_libraries(calc
     spdlog::spdlog
     PostgreSQL::PostgreSQL
 )
-
-if (ENABLE_PROFILING)
-    target_compile_options(calc PRIVATE -pg -g)
-    target_link_options(calc PRIVATE -pg)
-endif()
 
 # Tests
 add_executable(calc_tests
