@@ -28,12 +28,6 @@ void Checker::check_args(const Context& ctx) {
                 throw std::invalid_argument("factorial argument must be non-negative");
             }
             break;
-        case Operation::DIV:
-            if(ctx.b_ == 0) {
-                throw std::invalid_argument("division by zero is not allowed");
-            }
-            break;
-        
         default:
             break;
     }

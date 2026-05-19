@@ -24,4 +24,5 @@ struct Context {
     bool hasA_ = false;
     bool hasB_ = false;
     int result_ = 0;
+    int mathCode_ = 0;
 };
