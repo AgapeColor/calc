@@ -5,6 +5,7 @@
 #include "printer.h"
 
 #include <stdexcept>
+#include <string>
 
 Runner::Runner(PostgresConnection& dataBase, Cache& cache) 
     : dataBase_(dataBase),

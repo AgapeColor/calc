@@ -8,6 +8,7 @@
 #include "logger.h"
 #include "calculator.h"
 
+#include <exception>
 #include <stdexcept>
 
 RequestHandler::RequestHandler(PostgresConnection& dataBase, Cache& cache)
