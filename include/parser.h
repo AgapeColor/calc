@@ -2,6 +2,8 @@
 
 #include "context.h"
 
+#include <string>
+
 class Parser {
 public:
     Parser() = default;
@@ -11,5 +13,5 @@ public:
     Parser& operator=(Parser&& obj) = default;
     ~Parser() = default;
 
-    void parse_args(int argc, char** argv, Context& ctx);
+    void parse_json(const std::string& rawJson, Context& ctx);
 };

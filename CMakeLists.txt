@@ -98,6 +98,7 @@ add_executable(calc
     src/postgres_connection.cpp
     src/operation_record.cpp
     src/cache.cpp
+    src/request_handler.cpp
 )
 
 target_include_directories(calc
@@ -128,6 +129,7 @@ add_executable(calc_tests
     src/postgres_connection.cpp
     src/operation_record.cpp
     src/cache.cpp
+    src/request_handler.cpp
 )
 
 target_include_directories(calc_tests

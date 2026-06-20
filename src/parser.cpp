@@ -1,5 +1,4 @@
 #include "parser.h"
-#include "printer.h"
 #include "logger.h"
 
 #include <stdexcept>
@@ -20,21 +19,13 @@ static Operation parse_op(const nlohmann::json& data) {
     return Operation::NONE;
 }
 
-void Parser::parse_args(int argc, char** argv, Context& ctx) {
+void Parser::parse_json(const std::string& rawJson, Context& ctx) {
     Logger::instance().debug("Parsing arguments");
-    
+
     using json = nlohmann::json;
 
-    if (argc < 2) {
-        throw std::invalid_argument("JSON argument is missed");
-    }
-    std::string arg = argv[1];
-    if (arg == "-h" || arg == "--help") {
-        Printer::print_help(argv[0]);
-        exit(0);
-    }
     try {
-        json data = json::parse(argv[1]);
+        json data = json::parse(rawJson.c_str());
         ctx.operation_ = parse_op(data);
         ctx.a_ = data.at("a").get<int>();
         ctx.hasA_ = true;
