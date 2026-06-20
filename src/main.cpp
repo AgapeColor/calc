@@ -1,5 +1,9 @@
 #include "runner.h"
 #include "logger.h"
+#include "postgres_connection.h"
+#include "postgres_result.h"
+#include "sql.h"
+#include "cache.h"
 
 #include <exception>
 #include <iostream>
@@ -7,8 +11,15 @@
 int main(int argc, char** argv) {
     Logger::instance().info("Application is started");
     try {
-        Runner appRunner;
+        PostgresConnection dataBase("host=localhost dbname=calc_db user=calc_user password=calc");
+        dataBase.executeQuery(SqlQueries::CreateOperationsTable);
+        
+        Cache cache;
+        cache.load(dataBase.loadHistory());
+
+        Runner appRunner(dataBase, cache);
         appRunner.run(argc, argv);
+        
         Logger::instance().info("Application is finished");
         return 0;
     }
@@ -18,3 +29,4 @@ int main(int argc, char** argv) {
         return 1;
     }
 }
+

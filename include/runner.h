@@ -6,10 +6,11 @@
 #include "calculator.h"
 #include "printer.h"
 #include "cache.h"
+#include "postgres_connection.h"
 
 class Runner {
 public:
-    Runner() = default;
+    Runner(PostgresConnection& dataBase, Cache& cache);
     Runner(const Runner& obj) = default;
     Runner(Runner&& obj) = default;
     Runner& operator=(const Runner& obj) = default;
@@ -21,5 +22,6 @@ public:
 private:
     Context ctx_;
     Parser parser_;
-    Cache cache_;
+    PostgresConnection& dataBase_;
+    Cache& cache_;
 };
