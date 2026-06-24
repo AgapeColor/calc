@@ -1,13 +1,16 @@
 #include "tcp_server.h"
+
 #include "request_handler.h"
 #include "response_serializer.h"
 #include "logger.h"
+#include "app_error.h"
 
 #include <boost/asio.hpp>
+
 #include <string>
 #include <istream>
 #include <iostream>
-#include <stdexcept>
+#include <exception>
 
 TcpServer::TcpServer(std::uint16_t port, RequestHandler& requestHandler)
     : port_(port),
@@ -47,13 +50,13 @@ void TcpServer::run() {
             response += '\n';
             asio::write(socket, asio::buffer(response));
         }
-        catch (const std::invalid_argument& e) {
+        catch (const RequestError& e) {
             Logger::instance().error(std::string("Request error: ") + e.what());
             std::string response = ResponseSerializer::errorToJson("request", e.what());
             response += '\n';
             asio::write(socket, asio::buffer(response));
         }
-        catch (const std::runtime_error& e) {
+        catch (const MathError& e) {
             Logger::instance().error(std::string("Math error: ") + e.what());
             std::string response = ResponseSerializer::errorToJson("math", e.what());
             response += '\n';

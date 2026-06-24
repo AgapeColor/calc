@@ -1,9 +1,10 @@
 #include "parser.h"
 #include "logger.h"
+#include "app_error.h"
 
-#include <stdexcept>
-#include <string>
 #include <nlohmann/json.hpp>
+
+#include <string>
 
 static Operation parse_op(const nlohmann::json& data) {
     if (!data.contains("op")) {
@@ -21,7 +22,7 @@ static Operation parse_op(const nlohmann::json& data) {
 
 void Parser::parse_json(const std::string& rawJson, Context& ctx) {
     if (rawJson.empty()) {
-        throw std::invalid_argument("JSON_ARGUMENT_MISSED");
+        throw RequestError("JSON_ARGUMENT_MISSED");
     }
 
     Logger::instance().debug("Parsing JSON request");
@@ -39,6 +40,6 @@ void Parser::parse_json(const std::string& rawJson, Context& ctx) {
     }
     catch (const json::exception& e) {
         Logger::instance().error(std::string("JSON parse error: ") + e.what());
-        throw std::invalid_argument("JSON_PARSE_ERROR");
+        throw RequestError("JSON_PARSE_ERROR");
     }
 }

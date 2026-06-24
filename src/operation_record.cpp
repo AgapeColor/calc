@@ -1,4 +1,5 @@
 #include "operation_record.h"
+
 #include "postgres_result.h"
 #include "sql.h"
 

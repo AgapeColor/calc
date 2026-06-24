@@ -1,4 +1,5 @@
 #include "request_handler.h"
+
 #include "postgres_connection.h"
 #include "cache.h"
 #include "context.h"
@@ -44,7 +45,7 @@ Context RequestHandler::handle(const std::string& rawRequest) {
         
         try {
             dataBase_.saveOperation(dbRecord);
-        } 
+        }
         catch (std::runtime_error&) {
             Logger::instance().error("Failed to save operation to database");
         }

@@ -1,8 +1,8 @@
 #include "calculator.h"
+
 #include "calc_math.h"
 #include "logger.h"
-
-#include <stdexcept>
+#include "app_error.h"
 
 void Calculator::calculate(Context& ctx) {
     Logger::instance().debug("Calculating result");
@@ -36,7 +36,7 @@ void Calculator::calculate(Context& ctx) {
 
     if (code != calc_math::OK) {
         Logger::instance().error(math_error_name(code));
-        throw std::runtime_error(math_error_name(code));
+        throw MathError(math_error_name(code));
     }
 }
 

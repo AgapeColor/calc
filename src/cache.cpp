@@ -4,8 +4,7 @@
 
 void Cache::load(const std::vector<OperationRecord>& operationHistory) {
     for (const auto& record : operationHistory) {
-        std::string key = makeCacheKey(record);
-        cache_.insert({key, record});
+        insert(record);
     }
 }
 
