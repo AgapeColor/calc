@@ -1,0 +1,69 @@
+#include "tcp_server.h"
+#include "request_handler.h"
+#include "response_serializer.h"
+#include "logger.h"
+
+#include <boost/asio.hpp>
+#include <string>
+#include <istream>
+#include <iostream>
+#include <stdexcept>
+
+TcpServer::TcpServer(std::uint16_t port, RequestHandler& requestHandler)
+    : port_(port),
+      requestHandler_(requestHandler)
+{}
+
+void TcpServer::run() {
+    namespace asio = boost::asio;
+    using tcp = asio::ip::tcp;
+
+    asio::io_context ioContext;
+
+    tcp::endpoint endpoint(tcp::v4(), port_);
+    tcp::acceptor acceptor(ioContext, endpoint);
+
+    std::cout << "Server started on port " << port_ << std::endl;
+
+    while (true) {
+        tcp::socket socket(ioContext);
+
+        acceptor.accept(socket);
+        Logger::instance().info("Client connected: " + socket.remote_endpoint().address().to_string());
+
+        try {
+            asio::streambuf buffer;
+            asio::read_until(socket, buffer, '\n');
+
+            std::istream input(&buffer);
+
+            std::string request;
+            std::getline(input, request);
+            Logger::instance().debug("Received request: " + request);
+
+            Context ctx = requestHandler_.handle(request);
+
+            std::string response = ResponseSerializer::resultToJson(ctx);
+            response += '\n';
+            asio::write(socket, asio::buffer(response));
+        }
+        catch (const std::invalid_argument& e) {
+            Logger::instance().error(std::string("Request error: ") + e.what());
+            std::string response = ResponseSerializer::errorToJson("request", e.what());
+            response += '\n';
+            asio::write(socket, asio::buffer(response));
+        }
+        catch (const std::runtime_error& e) {
+            Logger::instance().error(std::string("Math error: ") + e.what());
+            std::string response = ResponseSerializer::errorToJson("math", e.what());
+            response += '\n';
+            asio::write(socket, asio::buffer(response));
+        }
+        catch (const std::exception& e) {
+            Logger::instance().error(std::string("Internal error: ") + e.what());
+            std::string response = ResponseSerializer::errorToJson("internal", "INTERNAL_ERROR");
+            response += '\n';
+            asio::write(socket, asio::buffer(response));
+        }
+    }
+}

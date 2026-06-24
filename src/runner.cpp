@@ -2,10 +2,10 @@
 #include "postgres_connection.h"
 #include "cache.h"
 #include "request_handler.h"
-#include "printer.h"
+#include "tcp_server.h"
 
 #include <stdexcept>
-#include <string>
+#include <cstdint>
 
 Runner::Runner(PostgresConnection& dataBase, Cache& cache) 
     : dataBase_(dataBase),
@@ -13,15 +13,14 @@ Runner::Runner(PostgresConnection& dataBase, Cache& cache)
 {}
 
 void Runner::run(int argc, char** argv) {
-    if (argc < 2) {
-        throw std::invalid_argument("JSON argument is missed");
-    }
+    (void)argc;
+    (void)argv;
 
-    std::string rawRequest = argv[1];
+    constexpr std::uint16_t serverPort = 8080;
 
     RequestHandler handler(dataBase_, cache_);
 
-    Context result = handler.handle(rawRequest);
+    TcpServer server(serverPort, handler);
 
-    Printer::print_result(result);
+    server.run();
 }

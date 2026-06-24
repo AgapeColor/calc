@@ -1,6 +1,7 @@
 #pragma once
 
 struct Context;
+enum class Operation;
 
 class Checker {
 public:
@@ -12,4 +13,6 @@ public:
     ~Checker() = default;
     
     static void check_args(const Context& ctx);
+private:
+    static bool isUnaryOperation(Operation operation);
 };

@@ -36,6 +36,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(calc_math json googletest spdlog)
 
 find_package(PostgreSQL REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
 
 enable_testing()
 
@@ -99,6 +100,8 @@ add_executable(calc
     src/operation_record.cpp
     src/cache.cpp
     src/request_handler.cpp
+    src/response_serializer.cpp
+    src/tcp_server.cpp
 )
 
 target_include_directories(calc
@@ -112,6 +115,7 @@ target_link_libraries(calc
     nlohmann_json::nlohmann_json
     spdlog::spdlog
     PostgreSQL::PostgreSQL
+    Boost::system
 )
 
 # Tests
@@ -130,6 +134,8 @@ add_executable(calc_tests
     src/operation_record.cpp
     src/cache.cpp
     src/request_handler.cpp
+    src/response_serializer.cpp
+    src/tcp_server.cpp
 )
 
 target_include_directories(calc_tests
@@ -144,6 +150,7 @@ target_link_libraries(calc_tests
     nlohmann_json::nlohmann_json
     spdlog::spdlog
     PostgreSQL::PostgreSQL
+    Boost::system
 )
 
 include(GoogleTest)

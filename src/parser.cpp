@@ -20,10 +20,13 @@ static Operation parse_op(const nlohmann::json& data) {
 }
 
 void Parser::parse_json(const std::string& rawJson, Context& ctx) {
-    Logger::instance().debug("Parsing arguments");
+    if (rawJson.empty()) {
+        throw std::invalid_argument("JSON_ARGUMENT_MISSED");
+    }
+
+    Logger::instance().debug("Parsing JSON request");
 
     using json = nlohmann::json;
-
     try {
         json data = json::parse(rawJson.c_str());
         ctx.operation_ = parse_op(data);
@@ -36,6 +39,6 @@ void Parser::parse_json(const std::string& rawJson, Context& ctx) {
     }
     catch (const json::exception& e) {
         Logger::instance().error(std::string("JSON parse error: ") + e.what());
-        throw std::invalid_argument(std::string("JSON parse error: ") + e.what());
+        throw std::invalid_argument("JSON_PARSE_ERROR");
     }
 }

@@ -32,7 +32,7 @@ void Calculator::calculate(Context& ctx) {
     }
     
     ctx.result_ = result;
-    ctx.mathCode_ = code;
+    ctx.mathCode_ = static_cast<int>(code);
 
     if (code != calc_math::OK) {
         Logger::instance().error(math_error_name(code));
@@ -42,9 +42,9 @@ void Calculator::calculate(Context& ctx) {
 
 const char* Calculator::math_error_name(int errorCode) {
     switch (errorCode) {
-        case calc_math::OVERFLOW:      return "Math error: overflow";
-        case calc_math::DIV_BY_ZERO:   return "Math error: division by zero";
-        case calc_math::INVALID_INPUT: return "Math error: invalid input";
-        default:                       return "Math error: unknown";
+        case calc_math::OVERFLOW:      return "OVERFLOW";
+        case calc_math::DIV_BY_ZERO:   return "DIV_BY_ZERO";
+        case calc_math::INVALID_INPUT: return "INVALID_INPUT";
+        default:                       return "UNKNOWN_MATH_ERROR";
     }
 }
