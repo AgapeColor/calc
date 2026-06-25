@@ -23,7 +23,12 @@ OperationRecord Cache::get(const OperationRecord& record) const {
 }
 
 void Cache::insert(const OperationRecord& record) {
-    if (record.status_ != 0) return;
+    constexpr int successStatus = 0;
+
+    if (record.status_ != successStatus) {
+        return;
+    }
+
     std::string key = makeCacheKey(record);
     cache_.insert({key, record});
 }
