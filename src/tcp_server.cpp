@@ -14,24 +14,45 @@
 
 TcpServer::TcpServer(std::uint16_t port, RequestHandler& requestHandler)
     : port_(port),
-      requestHandler_(requestHandler)
+      requestHandler_(requestHandler),
+      stopRequested_(false),
+      acceptor_(ioContext_)
 {}
 
 void TcpServer::run() {
+    stopRequested_.store(false);
+    ioContext_.restart();
+
     namespace asio = boost::asio;
     using tcp = asio::ip::tcp;
 
-    asio::io_context ioContext;
-
     tcp::endpoint endpoint(tcp::v4(), port_);
-    tcp::acceptor acceptor(ioContext, endpoint);
+
+    if (acceptor_.is_open()) {
+        boost::system::error_code error;
+        acceptor_.close(error);
+    }
+
+    acceptor_.open(endpoint.protocol());
+    acceptor_.bind(endpoint);
+    acceptor_.listen();
 
     std::cout << "Server started on port " << port_ << std::endl;
 
-    while (true) {
-        tcp::socket socket(ioContext);
+    while (!stopRequested_.load()) {
+        tcp::socket socket(ioContext_);
 
-        acceptor.accept(socket);
+        boost::system::error_code error;
+        acceptor_.accept(socket, error);
+
+        if (error) {
+            if (stopRequested_.load()) {
+                break;
+            }
+            Logger::instance().error("Accept error: " + error.message());
+            continue;
+        }
+
         Logger::instance().info("Client connected: " + socket.remote_endpoint().address().to_string());
 
         try {
@@ -69,4 +90,11 @@ void TcpServer::run() {
             asio::write(socket, asio::buffer(response));
         }
     }
+}
+
+void TcpServer::stop() {
+    stopRequested_.store(true);
+    boost::system::error_code error;
+    acceptor_.close(error);
+    ioContext_.stop();
 }
