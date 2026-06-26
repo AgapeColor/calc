@@ -7,14 +7,14 @@ class PostgresConnection;
 class Cache;
 class TcpServer;
 
-class Runner {
+class Application {
 public:
-    Runner(PostgresConnection& dataBase, Cache& cache);
-    Runner(const Runner& obj) = delete;
-    Runner(Runner&& obj) = delete;
-    Runner& operator=(const Runner& obj) = delete;
-    Runner& operator=(Runner&& obj) = delete;
-    ~Runner() = default;
+    Application(PostgresConnection& dataBase, Cache& cache);
+    Application(const Application& obj) = delete;
+    Application(Application&& obj) = delete;
+    Application& operator=(const Application& obj) = delete;
+    Application& operator=(Application&& obj) = delete;
+    ~Application() = default;
 
     void run();
 

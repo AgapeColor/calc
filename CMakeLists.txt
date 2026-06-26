@@ -90,7 +90,7 @@ endif()
 # Main executable
 add_executable(calc
     src/main.cpp
-    src/runner.cpp
+    src/application.cpp
     src/parser.cpp
     src/checker.cpp
     src/calculator.cpp
@@ -124,7 +124,7 @@ add_executable(calc_tests
     tests/test_checker.cpp
     tests/test_calculator.cpp
 
-    src/runner.cpp
+    src/application.cpp
     src/parser.cpp
     src/checker.cpp
     src/calculator.cpp

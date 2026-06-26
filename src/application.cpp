@@ -1,4 +1,4 @@
-#include "runner.h"
+#include "application.h"
 
 #include "cache.h"
 #include "request_handler.h"
@@ -18,12 +18,12 @@
 
 #include <pthread.h>
 
-Runner::Runner(PostgresConnection& dataBase, Cache& cache) 
+Application::Application(PostgresConnection& dataBase, Cache& cache) 
     : dataBase_(dataBase),
       cache_(cache)
 {}
 
-void Runner::run() {
+void Application::run() {
 
     constexpr std::uint16_t serverPort = 8080;
 
@@ -38,7 +38,7 @@ void Runner::run() {
     std::future<void> serverFuture = serverPromise.get_future();
 
     std::thread signalThread(
-        &Runner::waitForShutdownSignal,
+        &Application::waitForShutdownSignal,
         std::ref(server),
         std::cref(signalSet),
         std::ref(serverFuture)
@@ -60,7 +60,7 @@ void Runner::run() {
     serverFuture.get();
 }
 
-sigset_t Runner::createShutdownSignalSet() {
+sigset_t Application::createShutdownSignalSet() {
     sigset_t signalSet;
 
     if (sigemptyset(&signalSet) != 0 ||
@@ -73,7 +73,7 @@ sigset_t Runner::createShutdownSignalSet() {
     return signalSet;
 }
 
-void Runner::blockSignals(const sigset_t& signalSet) {
+void Application::blockSignals(const sigset_t& signalSet) {
     int maskResult = pthread_sigmask(SIG_BLOCK, &signalSet, nullptr);
 
     if (maskResult != 0) {
@@ -82,7 +82,7 @@ void Runner::blockSignals(const sigset_t& signalSet) {
     }
 }
 
-void Runner::waitForShutdownSignal(TcpServer& server,
+void Application::waitForShutdownSignal(TcpServer& server,
                                    const sigset_t& signalSet,
                                    std::future<void>& serverFuture) {
     siginfo_t signalInfo {};

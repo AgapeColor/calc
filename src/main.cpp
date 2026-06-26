@@ -1,5 +1,5 @@
 #include "printer.h"
-#include "runner.h"
+#include "application.h"
 #include "logger.h"
 #include "postgres_connection.h"
 #include "postgres_result.h"
@@ -27,8 +27,8 @@ int main(int argc, char** argv) {
         Cache cache;
         cache.load(dataBase.loadHistory());
 
-        Runner appRunner(dataBase, cache);
-        appRunner.run();
+        Application application(dataBase, cache);
+        application.run();
         
         Logger::instance().info("Application is finished");
         return 0;
