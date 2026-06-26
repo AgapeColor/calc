@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
         cache.load(dataBase.loadHistory());
 
         Runner appRunner(dataBase, cache);
-        appRunner.run(argc, argv);
+        appRunner.run();
         
         Logger::instance().info("Application is finished");
         return 0;
