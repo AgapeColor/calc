@@ -1,12 +1,13 @@
 # calc
 
-CLI-калькулятор для целых чисел (`int`) с обработкой ошибок (overflow / деление на 0 / неверный ввод).
+TCP-сервис калькулятора для целых чисел (`int`), принимающий JSON-запросы по сети и возвращающий JSON-ответы с результатом или ошибкой.
 
 ## Зависимости
 
 Системные зависимости:
 
 * **PostgreSQL** (`libpq-dev`) — хранение истории операций
+* **Boost.System / Boost.Asio** — сетевое взаимодействие TCP-сервера
 
 Подключаются через **CMake FetchContent**:
 
@@ -39,45 +40,80 @@ sudo cmake --build build --target install
 
 ## Использование
 
-Программа принимает один аргумент — JSON-строку.
+Сервис запускается без аргументов и начинает слушать TCP-порт `8080`.
+
+Справка:
+
+```bash
+calc --help
+calc -h
+```
 
 После установки:
 
 ```bash
-calc --help
-calc '{"op":"add","a":2,"b":3}'
-calc '{"op":"div","a":10,"b":2}'
-calc '{"op":"pow","a":2,"b":10}'
-calc '{"op":"fact","a":5}'
+calc
 ```
 
 Или без установки (из директории сборки):
 
 ```bash
-./build/calc --help
-./build/calc '{"op":"add","a":2,"b":3}'
-./build/calc '{"op":"div","a":10,"b":2}'
-./build/calc '{"op":"pow","a":2,"b":10}'
-./build/calc '{"op":"fact","a":5}'
+./build/debug/calc
+```
 
+Примеры запросов через `nc`:
+
+```bash
+printf '{"op":"add","a":2,"b":3}\n' | nc localhost 8080
+printf '{"op":"div","a":10,"b":2}\n' | nc localhost 8080
+printf '{"op":"pow","a":2,"b":10}\n' | nc localhost 8080
+printf '{"op":"fact","a":5}\n' | nc localhost 8080
 ```
 
 JSON-формат:
 
-* `op — операция: add|sub|mul|div|pow|fact`
-* `a — первый операнд`
-* `b — второй операнд (не требуется для fact)`
+* `op` — операция: `add`, `sub`, `mul`, `div`, `pow`, `fact`
+* `a`  — первый операнд
+* `b`  — второй операнд (не требуется для `fact`)
+
+Формат ответа:
+
+Успешный ответ:
+
+```json
+{"result":5}
+```
+
+Ошибка запроса:
+
+```json
+{"error":{"type":"request","code":"JSON_PARSE_ERROR"}}
+```
+
+Ошибка вычисления:
+
+```json
+{"error":{"type":"math","code":"DIV_BY_ZERO"}}
+```
+
+Внутренняя ошибка сервиса:
+
+```json
+{"error":{"type":"internal","code":"INTERNAL_ERROR"}}
+```
+
+Важно оставить `\n`, потому что сервер читает запрос через `read_until(..., '\n')`.
 
 ## Архитектура
 
 Поток выполнения:
 
-* Cache hit: `main -> run -> parse -> check -> [cache] -> print`
-* Cache miss: `main -> run -> parse -> check -> calculate -> save DB -> [cache] -> print`
+* Cache hit: `main -> Application -> TcpServer -> RequestHandler -> Parser -> Checker -> [cache] -> ResponseSerializer`
+* Cache miss: `main -> Application -> TcpServer -> RequestHandler -> Parser -> Checker -> Calculator -> save DB -> [cache] -> ResponseSerializer`
 
-Сущности: Runner / Parser / Checker / Calculator / Printer / PostgresConnection / Cache.
+Сущности: Application / TcpServer / RequestHandler / Parser / Checker / Calculator / ResponseSerializer / PostgresConnection / Cache.
 
-При запуске Runner подключается к PostgreSQL, загружает историю успешных операций в кэш (`std::unordered_map`). Повторные запросы с теми же аргументами возвращают результат из кэша без обращения к БД.
+При запуске `main` подключается к PostgreSQL, создаёт таблицу операций и загружает историю успешных операций в `Cache`. `Application` запускает TCP-сервер и обрабатывает завершение по сигналам `SIGINT` / `SIGTERM`.
 
 ## Code style / static analysis
 
@@ -94,10 +130,4 @@ Valgrind:
 ```bash
 cmake --build build --target valgrind
 cmake --build build --target valgrind_tests
-```
-
-Профилирование (perf):
-```bash
-perf stat ./build/debug/calc '{"op":"add","a":2,"b":3}'
-perf stat -r 5 ./build/debug/calc '{"op":"add","a":2,"b":3}'
 ```
