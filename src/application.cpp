@@ -94,7 +94,7 @@ void Application::waitForShutdownSignal(TcpServer& server,
         int receivedSignal = sigtimedwait(&signalSet, &signalInfo, &timeout);
         if (receivedSignal == SIGINT || receivedSignal == SIGTERM) {
             Logger::instance().info("Received shutdown signal: " + std::to_string(receivedSignal));
-            server.stop();
+            server.requestStop();
             break;
         }
         if (receivedSignal == -1) {
@@ -102,7 +102,7 @@ void Application::waitForShutdownSignal(TcpServer& server,
                 continue;
             }
             Logger::instance().error("Failed to wait shutdown signal");
-            server.stop();
+            server.requestStop();
             break;
         }
     }

@@ -4,6 +4,7 @@
 
 #include <atomic>
 #include <cstdint>
+#include <memory>
 
 class RequestHandler;
 
@@ -12,9 +13,12 @@ public:
     TcpServer(std::uint16_t port, RequestHandler& requestHandler);
 
     void run();
-    void stop();
+    void requestStop();
 
 private:
+    void startAccept();
+    void handleClient(const std::shared_ptr<boost::asio::ip::tcp::socket>& socket);
+
     std::uint16_t port_;
     RequestHandler& requestHandler_;
     std::atomic_bool stopRequested_;
