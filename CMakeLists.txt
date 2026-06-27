@@ -9,6 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Project options
 option(ENABLE_CLANG_TIDY "Run clang-tidy during build" ON)
 option(ENABLE_CLANG_FORMAT "Add clang-format target" ON)
+option(ENABLE_TSAN "Build with ThreadSanitizer" OFF)
 
 # Dependencies
 include(FetchContent)
@@ -69,6 +70,16 @@ if(ENABLE_CLANG_FORMAT)
     else()
         message(WARNING "clang-format not found")
     endif()
+endif()
+
+# Thread Sanitizer
+if(ENABLE_TSAN)
+    if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        message(FATAL_ERROR "ThreadSanitizer is supported only with Clang or GCC")
+    endif()
+
+    add_compile_options(-fsanitize=thread -g -O1 -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=thread -no-pie)
 endif()
 
 # Valgrind
@@ -154,7 +165,12 @@ target_link_libraries(calc_tests
 )
 
 include(GoogleTest)
-gtest_discover_tests(calc_tests)
+
+if(ENABLE_TSAN)
+    add_test(NAME calc_tests COMMAND calc_tests)
+else()
+    gtest_discover_tests(calc_tests)
+endif()
 
 if(VALGRIND_EXE)
     add_custom_target(valgrind_tests

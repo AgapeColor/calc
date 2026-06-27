@@ -8,7 +8,7 @@
 TEST(ParserTest, missedJson) {
     Context ctx;
     Parser parser;
-    std::string json = "";
+    std::string json;
     EXPECT_THROW(parser.parse_json(json, ctx), std::exception);
 }
 TEST(ParserTest, invalidJson) {
