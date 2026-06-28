@@ -30,7 +30,11 @@ void TcpServer::run() {
 
     if (acceptor_.is_open()) {
         boost::system::error_code error;
-        (void)acceptor_.close(error);
+        auto closeResult = acceptor_.close(error);
+
+        if (closeResult) {
+            Logger::instance().error("Failed to close acceptor: " + closeResult.message());
+        }
     }
 
     acceptor_.open(endpoint.protocol());
@@ -46,10 +50,17 @@ void TcpServer::run() {
 
 void TcpServer::requestStop() {
     stopRequested_.store(true);
-    boost::asio::post(ioContext_, [this]() {
-        boost::system::error_code error;
-        (void)acceptor_.close(error);
-        ioContext_.stop();
+    boost::asio::post(
+        ioContext_,
+        [this]() {
+            boost::system::error_code error;
+            auto closeResult = acceptor_.close(error);
+
+            if (closeResult) {
+                Logger::instance().error("Failed to close acceptor: " + closeResult.message());
+            }
+
+            ioContext_.stop();
     });
 }
 
