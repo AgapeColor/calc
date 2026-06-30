@@ -1,4 +1,5 @@
 #include "postgres_connection.h"
+
 #include "logger.h"
 #include "postgres_result.h"
 #include "operation_record.h"

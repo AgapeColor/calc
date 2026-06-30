@@ -1,10 +1,10 @@
 #include "parser.h"
-#include "printer.h"
 #include "logger.h"
+#include "app_error.h"
 
-#include <stdexcept>
-#include <string>
 #include <nlohmann/json.hpp>
+
+#include <string>
 
 static Operation parse_op(const nlohmann::json& data) {
     if (!data.contains("op")) {
@@ -20,21 +20,16 @@ static Operation parse_op(const nlohmann::json& data) {
     return Operation::NONE;
 }
 
-void Parser::parse_args(int argc, char** argv, Context& ctx) {
-    Logger::instance().debug("Parsing arguments");
-    
-    using json = nlohmann::json;
+void Parser::parse_json(const std::string& rawJson, Context& ctx) {
+    if (rawJson.empty()) {
+        throw RequestError("JSON_ARGUMENT_MISSED");
+    }
 
-    if (argc < 2) {
-        throw std::invalid_argument("JSON argument is missed");
-    }
-    std::string arg = argv[1];
-    if (arg == "-h" || arg == "--help") {
-        Printer::print_help(argv[0]);
-        exit(0);
-    }
+    Logger::instance().debug("Parsing JSON request");
+
+    using json = nlohmann::json;
     try {
-        json data = json::parse(argv[1]);
+        json data = json::parse(rawJson.c_str());
         ctx.operation_ = parse_op(data);
         ctx.a_ = data.at("a").get<int>();
         ctx.hasA_ = true;
@@ -45,6 +40,6 @@ void Parser::parse_args(int argc, char** argv, Context& ctx) {
     }
     catch (const json::exception& e) {
         Logger::instance().error(std::string("JSON parse error: ") + e.what());
-        throw std::invalid_argument(std::string("JSON parse error: ") + e.what());
+        throw RequestError("JSON_PARSE_ERROR");
     }
 }

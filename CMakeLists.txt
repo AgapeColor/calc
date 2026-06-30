@@ -9,6 +9,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Project options
 option(ENABLE_CLANG_TIDY "Run clang-tidy during build" ON)
 option(ENABLE_CLANG_FORMAT "Add clang-format target" ON)
+option(ENABLE_TSAN "Build with ThreadSanitizer" OFF)
 
 # Dependencies
 include(FetchContent)
@@ -33,9 +34,13 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
     GIT_TAG v1.17.0
 )
+
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+
 FetchContent_MakeAvailable(calc_math json googletest spdlog)
 
 find_package(PostgreSQL REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
 
 enable_testing()
 
@@ -70,6 +75,16 @@ if(ENABLE_CLANG_FORMAT)
     endif()
 endif()
 
+# Thread Sanitizer
+if(ENABLE_TSAN)
+    if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        message(FATAL_ERROR "ThreadSanitizer is supported only with Clang or GCC")
+    endif()
+
+    add_compile_options(-fsanitize=thread -g -O1 -fno-omit-frame-pointer)
+    add_link_options(-fsanitize=thread -no-pie)
+endif()
+
 # Valgrind
 find_program(VALGRIND_EXE NAMES valgrind)
 
@@ -89,7 +104,7 @@ endif()
 # Main executable
 add_executable(calc
     src/main.cpp
-    src/runner.cpp
+    src/application.cpp
     src/parser.cpp
     src/checker.cpp
     src/calculator.cpp
@@ -98,6 +113,9 @@ add_executable(calc
     src/postgres_connection.cpp
     src/operation_record.cpp
     src/cache.cpp
+    src/request_handler.cpp
+    src/response_serializer.cpp
+    src/tcp_server.cpp
 )
 
 target_include_directories(calc
@@ -111,6 +129,7 @@ target_link_libraries(calc
     nlohmann_json::nlohmann_json
     spdlog::spdlog
     PostgreSQL::PostgreSQL
+    Boost::system
 )
 
 # Tests
@@ -118,8 +137,9 @@ add_executable(calc_tests
     tests/test_parser.cpp
     tests/test_checker.cpp
     tests/test_calculator.cpp
+    tests/test_tcp_server.cpp
 
-    src/runner.cpp
+    src/application.cpp
     src/parser.cpp
     src/checker.cpp
     src/calculator.cpp
@@ -128,6 +148,9 @@ add_executable(calc_tests
     src/postgres_connection.cpp
     src/operation_record.cpp
     src/cache.cpp
+    src/request_handler.cpp
+    src/response_serializer.cpp
+    src/tcp_server.cpp
 )
 
 target_include_directories(calc_tests
@@ -142,10 +165,16 @@ target_link_libraries(calc_tests
     nlohmann_json::nlohmann_json
     spdlog::spdlog
     PostgreSQL::PostgreSQL
+    Boost::system
 )
 
 include(GoogleTest)
-gtest_discover_tests(calc_tests)
+
+if(ENABLE_TSAN)
+    add_test(NAME calc_tests COMMAND calc_tests)
+else()
+    gtest_discover_tests(calc_tests)
+endif()
 
 if(VALGRIND_EXE)
     add_custom_target(valgrind_tests
@@ -160,4 +189,18 @@ endif()
 
 # Install
 include(GNUInstallDirs)
+
 install(TARGETS calc RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+install(FILES packaging/calc.service DESTINATION lib/systemd/system)
+
+# Package
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_NAME "calc")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_CONTACT "deheartman19@gmail.com")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "deheartman")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpq5")
+set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "TCP calculator service")
+include(CPack)

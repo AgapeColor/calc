@@ -1,12 +1,13 @@
 # calc
 
-CLI-калькулятор для целых чисел (`int`) с обработкой ошибок (overflow / деление на 0 / неверный ввод).
+TCP-сервис калькулятора для целых чисел (`int`), принимающий JSON-запросы по сети и возвращающий JSON-ответы с результатом или ошибкой.
 
 ## Зависимости
 
 Системные зависимости:
 
 * **PostgreSQL** (`libpq-dev`) — хранение истории операций
+* **Boost.System / Boost.Asio** — сетевое взаимодействие TCP-сервера
 
 Подключаются через **CMake FetchContent**:
 
@@ -37,67 +38,147 @@ cmake --build build
 sudo cmake --build build --target install
 ```
 
+## DEB-пакет и systemd
+
+### Сборка deb-пакета:
+
+```bash
+cmake --build --preset debug
+cd build/debug
+cpack -G DEB
+```
+
+### Установка deb-пакета:
+
+```bash
+sudo apt install ./calc-1.0.0-Linux.deb
+```
+
+### Управление сервисом:
+```bash
+sudo systemctl start calc
+sudo systemctl restart calc
+sudo systemctl stop calc
+sudo systemctl status calc
+```
+
 ## Использование
 
-Программа принимает один аргумент — JSON-строку.
+Сервис запускается без аргументов и начинает слушать TCP-порт `8080`.
 
-После установки:
+### Справка:
 
 ```bash
 calc --help
-calc '{"op":"add","a":2,"b":3}'
-calc '{"op":"div","a":10,"b":2}'
-calc '{"op":"pow","a":2,"b":10}'
-calc '{"op":"fact","a":5}'
+calc -h
 ```
 
-Или без установки (из директории сборки):
+### Ручной запуск после установки:
 
 ```bash
-./build/calc --help
-./build/calc '{"op":"add","a":2,"b":3}'
-./build/calc '{"op":"div","a":10,"b":2}'
-./build/calc '{"op":"pow","a":2,"b":10}'
-./build/calc '{"op":"fact","a":5}'
-
+calc
 ```
 
-JSON-формат:
+### Или без установки (из директории сборки):
 
-* `op — операция: add|sub|mul|div|pow|fact`
-* `a — первый операнд`
-* `b — второй операнд (не требуется для fact)`
+```bash
+./build/debug/calc
+```
+
+### Примеры запросов через `nc`:
+
+```bash
+printf '{"op":"add","a":2,"b":3}\n' | nc localhost 8080
+printf '{"op":"div","a":10,"b":2}\n' | nc localhost 8080
+printf '{"op":"pow","a":2,"b":10}\n' | nc localhost 8080
+printf '{"op":"fact","a":5}\n' | nc localhost 8080
+```
+
+## TCP API
+
+### Формат запроса:
+
+* `op` — операция: `add`, `sub`, `mul`, `div`, `pow`, `fact`
+* `a`  — первый операнд
+* `b`  — второй операнд (не требуется для `fact`)
+
+### Успешный ответ:
+
+```json
+{"result":5}
+```
+
+### Ошибка запроса:
+
+```json
+{"error":{"type":"request","code":"JSON_PARSE_ERROR"}}
+```
+
+### Ошибка вычисления:
+
+```json
+{"error":{"type":"math","code":"DIV_BY_ZERO"}}
+```
+
+### Внутренняя ошибка сервиса:
+
+```json
+{"error":{"type":"internal","code":"INTERNAL_ERROR"}}
+```
+
+Важно оставить `\n`, потому что сервер читает запрос через `read_until(..., '\n')`.
 
 ## Архитектура
 
-Поток выполнения:
+### Сущности:
 
-* Cache hit: `main -> run -> parse -> check -> [cache] -> print`
-* Cache miss: `main -> run -> parse -> check -> calculate -> save DB -> [cache] -> print`
+* `Application` — запускает TCP-сервер и отдельный поток обработки сигналов завершения.
+* `TcpServer` — принимает TCP-подключения, читает JSON-запросы и отправляет JSON-ответы.
+* `RequestHandler` — связывает парсинг, проверку, кэш, вычисление и сохранение операции.
+* `Parser` — преобразует JSON-строку в `Context`.
+* `Checker` — проверяет корректность операции и аргументов.
+* `Calculator` — выполняет математическое вычисление.
+* `ResponseSerializer` — преобразует результат или ошибку в JSON-ответ.
+* `PostgresConnection` — работает с PostgreSQL: создаёт таблицу, сохраняет и загружает операции.
+* `Cache` — хранит успешные операции и возвращает ранее вычисленный результат.
 
-Сущности: Runner / Parser / Checker / Calculator / Printer / PostgresConnection / Cache.
+### Поток выполнения:
 
-При запуске Runner подключается к PostgreSQL, загружает историю успешных операций в кэш (`std::unordered_map`). Повторные запросы с теми же аргументами возвращают результат из кэша без обращения к БД.
+**Cache hit:**
+
+```text
+main -> Application -> TcpServer -> RequestHandler -> Parser -> Checker -> [cache] -> ResponseSerializer
+```
+
+**Cache miss:**
+
+```text
+main -> Application -> TcpServer -> RequestHandler -> Parser -> Checker -> Calculator -> save DB -> [cache] -> ResponseSerializer
+```
+
+При запуске `main` подключается к PostgreSQL, создаёт таблицу операций и загружает историю успешных операций в `Cache`. `Application` запускает TCP-сервер и обрабатывает завершение по сигналам `SIGINT` / `SIGTERM`.
 
 ## Code style / static analysis
 
 В корне проекта: `.clang-format`, `.clang-tidy`.
 
-Форматирование кода:
+### Форматирование кода:
 ```bash
 cmake --build build --target format
 ```
 
 ## Анализ памяти и производительности
 
-Valgrind:
+### Valgrind:
 ```bash
 cmake --build build --target valgrind
 cmake --build build --target valgrind_tests
 ```
 
-Профилирование (perf):
+### ThreadSanitizer:
+
 ```bash
-perf stat ./build/debug/calc '{"op":"add","a":2,"b":3}'
-perf stat -r 5 ./build/debug/calc '{"op":"add","a":2,"b":3}'
+cmake --preset tsan
+cmake --build --preset tsan
+setarch $(uname -m) -R ctest --test-dir build/tsan --output-on-failure
 ```

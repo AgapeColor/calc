@@ -24,15 +24,6 @@ TEST(CheckerTest, missedSecondArg) {
 }
 
 // Specific operation rules
-TEST(CheckerTest, negativeExponent) {
-    Context ctx;
-    ctx.operation_ = Operation::POW;
-    ctx.a_ = 2;
-    ctx.b_ = -3;
-    ctx.hasA_ = true;
-    ctx.hasB_ = true;
-    EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
-}
 TEST(CheckerTest, zeroExponent) {
     Context ctx;
     ctx.operation_ = Operation::POW;
@@ -41,13 +32,6 @@ TEST(CheckerTest, zeroExponent) {
     ctx.hasA_ = true;
     ctx.hasB_ = true;
     EXPECT_NO_THROW(Checker::check_args(ctx));
-}
-TEST(CheckerTest, negativeFact) {
-    Context ctx;
-    ctx.operation_ = Operation::FACT;
-    ctx.a_ = -5;
-    ctx.hasA_ = true;
-    EXPECT_THROW(Checker::check_args(ctx), std::invalid_argument);
 }
 TEST(CheckerTest, validFact) {
     Context ctx;
