@@ -34,6 +34,9 @@ FetchContent_Declare(
     GIT_REPOSITORY https://github.com/gabime/spdlog.git
     GIT_TAG v1.17.0
 )
+
+set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+
 FetchContent_MakeAvailable(calc_math json googletest spdlog)
 
 find_package(PostgreSQL REQUIRED)
@@ -186,4 +189,18 @@ endif()
 
 # Install
 include(GNUInstallDirs)
+
 install(TARGETS calc RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+install(FILES packaging/calc.service DESTINATION lib/systemd/system)
+
+# Package
+set(CPACK_GENERATOR "DEB")
+set(CPACK_PACKAGE_NAME "calc")
+set(CPACK_PACKAGE_VERSION "1.0.0")
+set(CPACK_PACKAGE_CONTACT "deheartman19@gmail.com")
+set(CPACK_DEBIAN_PACKAGE_MAINTAINER "deheartman")
+set(CPACK_DEBIAN_PACKAGE_DEPENDS "libpq5")
+set(CPACK_DEBIAN_PACKAGE_SECTION "utils")
+set(CPACK_DEBIAN_PACKAGE_DESCRIPTION "TCP calculator service")
+include(CPack)
